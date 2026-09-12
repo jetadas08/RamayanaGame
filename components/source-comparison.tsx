@@ -1,0 +1,11 @@
+import type {JourneyNode} from "@/lib/types";
+import styles from "@/components/journey.module.scss";
+export function SourceComparison({node,compact=false}:{node:JourneyNode;compact?:boolean}){
+ const special=node.id==="HJ-09"?"This early meeting with Vibhīṣaṇa belongs to Rāmacaritamānasa. Do not read it as the same sequence in Vālmīki.":node.id==="HJ-12"?"Vālmīki gives the six-stage battle escalation. Rāmacaritamānasa condenses the action, emphasizing Akṣaya and Meghanāda.":node.id==="HJ-07"?"The RCM passage describes a shadow-catching demoness; the Vālmīki layer supplies the name Siṃhikā.":"Read the textual event separately from the learning interpretation and the modern place association.";
+ const content=<><p>{special}</p><div className={styles.grid}>
+ <section><h3>VR-GP · Preferred edition</h3><p>Gita Press Vālmīki Rāmāyaṇa. Edition-specific page and verse matching remains pending; no exact quotation is claimed.</p><a href="https://archive.org/details/valmiki-ramayana-part-2" target="_blank" rel="noreferrer">Open Part 2 ↗</a></section>
+ <section><h3>VR-HPS · English comparison</h3><p>{node.id==="HJ-09"?"This early meeting is not treated as a shared Vālmīki event.":`Working episode: ${node.title}. ${node.number<4?"Kiṣkindhā Kāṇḍa":"Sundara Kāṇḍa"}; passage reference awaiting edition audit.`}</p><a href="https://archive.org/details/ssvm_ramayana-of-valmiki-translated-by-hari-prasad-shastri-english-1952" target="_blank" rel="noreferrer">Open Shastri edition ↗</a></section>
+ <section><h3>RCM-GP · Devotional telling</h3><p>{node.sourceLabels.includes("RCM-GP")?"Included in the approved RCM comparison layer. Exact uploaded-edition locator is pending recovery of the source artifact.":"Not attributed to RCM in this node’s current source record."}</p></section>
+ <section><h3>TRAD · Place association</h3><p>{node.whyHere.tradition} {node.whyHere.reason}</p></section></div><p className={styles.note}>Story: narrative paraphrase · Deeper meaning: learning interpretation · Challenges and map layout: game adaptation. Source badges identify editorial layers, not completed verse-level verification.</p></>;
+ return compact?<section className={styles.compactSources}><h3>Compare traditions</h3>{content}</section>:<details className={styles.panel}><summary>Compare traditions · VR-GP / VR-HPS / RCM-GP / TRAD</summary>{content}</details>;
+}
