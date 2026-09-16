@@ -62,12 +62,20 @@ export function challengePoolFor(node:JourneyNode,level:Difficulty):Challenge[]{
  if(level==="seeker"){
   const next=journeyNodes[node.number];
   const nextTitle=next?.title ?? "The mission’s report to Rāma";
+  const changeQuestion=node.id==="HJ-11"
+   ?make(`${node.id}-seeker-2`,"After Sītā recognizes the ring, what must Hanumān carry back to Rāma?","Sītā’s message and token",["A claim to Laṅkā’s throne","A request to abandon the search"],"Recognition opens the return half of the messenger’s duty: Hanumān must faithfully carry Sītā’s words and token back to Rāma.",node.number)
+   :make(`${node.id}-seeker-2`,"Which description best captures what changes here?",node.excerpt,others.map(item=>item.excerpt),node.story,node.number);
   return [
    make(`${node.id}-seeker-0`,"What follows this encounter in the journey’s story order?",nextTitle,others.map(item=>item.title),`The next step is ${nextTitle}.`,node.number+1),
    make(`${node.id}-seeker-1`,"Which consequence or purpose best explains this moment?",missionInsights[node.number-1][0],otherNodes(node).map(item=>missionInsights[item.number-1][0]),missionInsights[node.number-1][1],node.number+2),
-   make(`${node.id}-seeker-2`,"Which description best captures what changes here?",node.excerpt,others.map(item=>item.excerpt),node.story,node.number),
+   changeQuestion,
   ];
  }
+ if(node.id==="HJ-11")return [
+  make(`${node.id}-scholar-0`,"What ethical duty belongs to a messenger carrying words between people who are separated?","Preserve each person’s meaning and trust without centering himself",["Replace their words with a more impressive story","Use the message to claim authority for himself"],"Learning interpretation: faithful messengerhood requires accuracy, humility, and care for the trust placed in the messenger.",node.number),
+  make(`${node.id}-scholar-1`,"What does this exchange reveal about Sītā’s role in the mission?","She actively chooses the message and token that will return to Rāma",["She remains only a silent object of the search","She transfers command of Laṅkā to Hanumān"],"Learning interpretation: Sītā becomes an active participant in the return message by entrusting Hanumān with her own words and sign of recognition.",node.number+1),
+  make(`${node.id}-scholar-2`,"Why can Rāma’s small ring matter more than Hanumān’s immense strength in this moment?","Sītā needs a recognizable sign of trust, not a display of force",["The ring contains greater physical power than Hanumān","Sītā must be persuaded through fear"],"Learning interpretation: Hanumān’s strength brought him to Laṅkā, but relationship and recognition allow Sītā to receive him as Rāma’s trusted messenger.",node.number+2),
+ ];
  const [prompt,right,wrong,explanation]=reasons[node.number-1];
  const explanationLabel=node.id==="HJ-09"||node.id==="HJ-12"?"Source comparison":"Learning interpretation";
  return [

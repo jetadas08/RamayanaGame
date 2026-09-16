@@ -2,7 +2,22 @@ export type ConfidenceLevel = "A" | "B" | "C" | "D" | "E";
 export type DisplayType = "point" | "region" | "route" | "narrative";
 export type Difficulty = "explorer" | "seeker" | "scholar";
 export type RelationshipType = "family" | "marriage" | "devotion" | "service" | "teacher" | "alliance" | "friendship" | "opposition" | "messenger" | "protector" | "guidance";
+export type NarrativeContext = "hanuman" | "rama" | "sita" | "bharata" | "ravana";
 export type RelationshipChallengeType = "identify-type" | "complete-character" | "missing-network" | "connection-chain";
+export type CharacterProfileSection = "overview" | "family" | "guidance" | "connections" | "journey" | "events" | "objects" | "sources";
+export type CharacterProfileDepth = "major" | "supporting" | "encounter";
+export type CharacterKnowledgeScope = "hanuman-v1" | "rama-path-v1" | "sita-path-v1" | "bharata-path-v1" | "ravana-path-v1";
+export type CharacterKnowledgeUnlockMethod = "autoOnCharacterDiscovery" | "autoOnJourneyNode" | "autoOnJourneyComplete" | "characterChallenge" | "connectionsChallenge" | "sacredObjectDiscovery" | "sourceExploration" | "unavailablePendingReview";
+export type CharacterChallengeType = "family-connection" | "identify-guide" | "connected-character" | "key-event" | "character-quality" | "story-role" | "source-aware";
+export type CharacterKnowledgeUnlock =
+  | { kind: "discovery" }
+  | { kind: "journey"; nodeId: string }
+  | { kind: "relationship"; relationshipId: string }
+  | { kind: "challenge"; challengeId: string }
+  | { kind: "object"; objectId: string }
+  | { kind: "achievement"; achievement: string }
+  | { kind: "sourceExploration"; sourceId: SourceId }
+  | { kind: "pendingReview" };
 
 export interface Choice {
   id: string;
@@ -16,6 +31,14 @@ export interface Challenge {
   answer: string;
   explanation: string;
 }
+
+export type MasteryActivityType="singleSelect"|"multiSelect"|"sequence"|"matching"|"sceneDiscovery"|"predictionChoice"|"connectionBuilder"|"objectMatch"|"whoAmI"|"missingStoryStep"|"sourceComparison"|"trueFalse";
+interface MasteryActivityBase {id:string;eventId:string;stage:Difficulty;type:MasteryActivityType;prompt:string;hint:string;explanation:string;sourceRefs:string[];unlocks:string[];difficulty:Difficulty;replayable:boolean;perspectives:NarrativeContext[];claimType:"textual"|"interpretation"|"source-comparison";}
+export interface SelectMasteryActivity extends MasteryActivityBase {type:"singleSelect"|"sceneDiscovery"|"predictionChoice";options:Choice[];correctAnswer:string;}
+export interface MultiSelectMasteryActivity extends MasteryActivityBase {type:"multiSelect";options:Choice[];correctState:string[];}
+export interface SequenceMasteryActivity extends MasteryActivityBase {type:"sequence";items:Choice[];correctState:string[];}
+export interface MatchingMasteryActivity extends MasteryActivityBase {type:"matching";pairs:{id:string;left:string;correct:string}[];options:Choice[];correctState:Record<string,string>;}
+export type MasteryActivity=SelectMasteryActivity|MultiSelectMasteryActivity|SequenceMasteryActivity|MatchingMasteryActivity;
 
 export interface SubEncounter {
   id: string;
@@ -39,7 +62,51 @@ export interface StoryMemoryActivity extends ActivityBase { type:"storyMemory"; 
 export interface MasteryQuestionActivity extends ActivityBase { type:"masteryQuestion"; challenge:Challenge; }
 export type EncounterActivity=SceneDiscoveryActivity|PredictionChoiceActivity|CharacterUnlockActivity|RelationshipUnlockActivity|ObjectDiscoveryActivity|StoryMemoryActivity|MasteryQuestionActivity;
 export interface EncounterReward { id:string; type:"character"|"relationship"|"object"|"insight"|"achievement"; label:string; }
-export interface SacredObject { id:string; name:string; image?:string; description:string; relatedCharacters:string[]; discoveryNode:string; sources:SourceReference[]; }
+export type SacredObjectType="signet-ring"|"crest-jewel"|"ornament"|"token"|"weapon"|"emblem"|"ritual-object";
+export interface SacredObject {
+  id:string;
+  slug:string;
+  name:string;
+  sanskritName:string;
+  objectType:SacredObjectType;
+  thumbnailImage:string;
+  iconImage:string;
+  previewImage?:string;
+  altText:string;
+  caption:string;
+  description:string;
+  meaning:string;
+  transmissionChain:string[];
+  relatedCharacters:string[];
+  relatedRelationshipIds:string[];
+  discoveryNode:string;
+  unlockSource:string;
+  scope:string;
+  significanceLabel?:string;
+  assetStatus:"final"|"placeholder";
+  sources:SourceReference[];
+}
+
+export type NodeSceneType = "Decision" | "Revelation" | "Guidance" | "Journey" | "Encounter" | "Threshold" | "Discovery" | "Message" | "Battle" | "Court" | "Transformation" | "Return";
+export type NodeSceneRevealTrigger =
+  | {kind:"nodeComplete"}
+  | {kind:"sceneDiscovery";discoveryId:string}
+  | {kind:"characterDiscovery";characterName:string}
+  | {kind:"sacredObjectDiscovery";objectId:string};
+export interface NodeSceneDefinition {
+  imageLocked:string;
+  imageRevealed:string;
+  captionLocked:string;
+  captionRevealed:string;
+  altLocked:string;
+  altRevealed:string;
+  type:NodeSceneType;
+  revealTrigger:NodeSceneRevealTrigger;
+  focalPosition?:string;
+  imageFit?:"cover"|"contain";
+  assetStatus:"final"|"placeholder";
+  replacementBasePath:string;
+}
 
 export interface JourneyNode {
   id: string;
@@ -69,6 +136,9 @@ export interface JourneyNode {
   masteryQuestions?: Challenge[];
   rewards?: EncounterReward[];
   subEncounters?: SubEncounter[];
+  scene: NodeSceneDefinition;
+  completionTakeaway: string;
+  nextNodeTeaser?: string;
 }
 
 export interface JourneyProgressState {
@@ -78,6 +148,7 @@ export interface JourneyProgressState {
   unlockedRelationships: string[];
   answeredChallenges: Record<string, string>;
   relationshipChallengeAnswers: Record<string, string>;
+  characterChallengeAnswers: Record<string, string>;
   sceneDiscoveries: string[];
   hiddenDiscoveries: string[];
   discoveredObjects: string[];
@@ -86,6 +157,58 @@ export interface JourneyProgressState {
   nodeAttempts: Record<string,number>;
   achievements: string[];
   difficulty: Difficulty;
+}
+
+export interface CharacterProfileField {
+  id: string;
+  characterId: string;
+  section: CharacterProfileSection;
+  label: string;
+  value: string;
+  relatedCharacterId?: string;
+  relationshipId?: string;
+  familyGroup?: "Parents" | "Siblings" | "Spouse" | "Children";
+  sources: SourceReference[];
+  sourceStatus: "Textual" | "Traditional" | "Later devotional tradition" | "Debated / multiple traditions";
+  unlock: CharacterKnowledgeUnlock;
+  /** Content packs reuse the same fact instead of creating parallel profile records. */
+  scopes?: CharacterKnowledgeScope[];
+  unlockMethod?: CharacterKnowledgeUnlockMethod;
+  countsTowardCompletion?: boolean;
+  claimType?: ClaimType;
+}
+
+export interface CharacterKnowledgeProfileDefinition {
+  characterId: string;
+  depth: CharacterProfileDepth;
+  activeScope: CharacterKnowledgeScope;
+  availableScopes: CharacterKnowledgeScope[];
+  futureSupportedFacts: string[];
+}
+
+export interface CharacterChallenge {
+  id: string;
+  characterId: string;
+  type: CharacterChallengeType;
+  prompt: string;
+  context: string;
+  options: Choice[];
+  answer: string;
+  explanation: string;
+  unlockFieldIds: string[];
+  unlockRelationshipIds?: string[];
+}
+
+export interface CharacterKnowledgeProgress {
+  characterId: string;
+  scope: CharacterKnowledgeScope;
+  depth: CharacterProfileDepth;
+  completionLabel: string;
+  unlocked: number;
+  total: number;
+  percentage: number;
+  state: "Discovered" | "Developing" | "Complete";
+  sections: Record<CharacterProfileSection, { unlocked: number; total: number }>;
 }
 
 export interface Relationship {
@@ -99,6 +222,9 @@ export interface Relationship {
   unlocked: boolean;
   directional: boolean;
   unlockAt: number;
+  clue: string;
+  discoverableFrom: string[];
+  narrativeContexts: NarrativeContext[];
 }
 
 export interface RelationshipChallengeOption { id: string; label: string; }

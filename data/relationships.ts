@@ -1,6 +1,6 @@
-import type {CharacterConnectionMap,Relationship,RelationshipType,RelationshipUnlock,SourceId} from "@/lib/types";
+import type {CharacterConnectionMap,NarrativeContext,Relationship,RelationshipType,RelationshipUnlock,SourceId} from "@/lib/types";
 
-type Seed=Omit<Relationship,"unlocked"|"directional">&{directional?:boolean};
+type Seed=Omit<Relationship,"unlocked"|"directional"|"clue"|"discoverableFrom"|"narrativeContexts">&{directional?:boolean};
 const vr:SourceId[]=["VR-GP","VR-HPS"];
 const seeds:Seed[]=[
  {id:"REL-RAMA-HANUMAN-SERVICE",fromCharacterId:"rama",toCharacterId:"hanuman",type:"service",label:"entrusts the search mission to",eventId:"HJ-01",sources:vr,unlockAt:0},
@@ -21,6 +21,7 @@ const seeds:Seed[]=[
  {id:"REL-HANUMAN-AKSHA-OPPOSITION",fromCharacterId:"hanuman",toCharacterId:"aksha-kumara",type:"opposition",label:"defeats in battle",eventId:"HJ-12",sources:vr,unlockAt:12},
  {id:"REL-INDRAJIT-HANUMAN-OPPOSITION",fromCharacterId:"indrajit",toCharacterId:"hanuman",type:"opposition",label:"captures with the Brahmāstra",eventId:"HJ-12",sources:vr,unlockAt:12},
  {id:"REL-RAVANA-INDRAJIT-FAMILY",fromCharacterId:"ravana",toCharacterId:"indrajit",type:"family",label:"is father of",eventId:"HJ-12",sources:vr,unlockAt:12},
+ {id:"REL-RAVANA-VIBHISHANA-FAMILY",fromCharacterId:"ravana",toCharacterId:"vibhishana",type:"family",label:"is brother of",eventId:"HJ-13",sources:vr,unlockAt:13,directional:false},
  {id:"REL-VIBHISHANA-RAVANA-GUIDANCE",fromCharacterId:"vibhishana",toCharacterId:"ravana",type:"guidance",label:"offers dharmic counsel to",eventId:"HJ-13",sources:vr,unlockAt:13},
  {id:"REL-HANUMAN-RAVANA-MESSENGER",fromCharacterId:"hanuman",toCharacterId:"ravana",type:"messenger",label:"delivers a warning to",eventId:"HJ-13",sources:vr,unlockAt:13},
  {id:"REL-RAVANA-HANUMAN-OPPOSITION",fromCharacterId:"ravana",toCharacterId:"hanuman",type:"opposition",label:"orders the punishment of",eventId:"HJ-14",sources:vr,unlockAt:14},
@@ -29,7 +30,12 @@ const seeds:Seed[]=[
  {id:"REL-RAMA-LAKSHMANA-FAMILY",fromCharacterId:"rama",toCharacterId:"lakshmana",type:"family",label:"is brother of",eventId:"HJ-15",sources:["VR-GP","VR-HPS","RCM-GP"],unlockAt:15,directional:false},
  {id:"REL-HANUMAN-SUGRIVA-SERVICE",fromCharacterId:"hanuman",toCharacterId:"sugriva",type:"service",label:"serves in the search party of",eventId:"HJ-15",sources:vr,unlockAt:15},
 ];
-export const relationships:Relationship[]=seeds.map(item=>({...item,directional:item.directional??true,unlocked:item.unlockAt===0}));
+const typeClues:Record<RelationshipType,string>={
+ family:"The story identifies a close kinship between these characters.",marriage:"A shared bond joins these two figures across the mission.",devotion:"One character directs steadfast faith and purpose toward the other.",service:"One character accepts responsibility for another’s mission.",teacher:"Knowledge passes deliberately from one character to the other.",alliance:"Their aims become joined through a shared cause.",friendship:"They recognize common purpose in an unexpected place.",opposition:"Their encounter places their purposes in direct conflict.",messenger:"One carries trusted words or proof to the other.",protector:"One preserves the safety or hope of the other.",guidance:"One helps the other see the strength or choice needed next.",
+};
+function contextsFor(seed:Seed):NarrativeContext[]{const ids=[seed.fromCharacterId,seed.toCharacterId],contexts:NarrativeContext[]=["hanuman"];for(const context of ["rama","sita","bharata","ravana"] as const)if(ids.includes(context))contexts.push(context);return Array.from(new Set(contexts));}
+export const relationships:Relationship[]=seeds.map(item=>({...item,directional:item.directional??true,unlocked:false,clue:typeClues[item.type],discoverableFrom:[item.eventId],narrativeContexts:contextsFor(item)}));
+export function availableRelationshipIds(completedEncounterCount:number){return relationships.filter(item=>item.unlockAt<=completedEncounterCount).map(item=>item.id);}
 export const relationshipUnlocks:RelationshipUnlock[]=Array.from(new Set(relationships.map(r=>r.eventId))).map(eventId=>({eventId,relationshipIds:relationships.filter(r=>r.eventId===eventId).map(r=>r.id)}));
 export const characterConnectionMap:CharacterConnectionMap=relationships.reduce((map,relationship)=>{for(const id of [relationship.fromCharacterId,relationship.toCharacterId]) (map[id]??=[]).push(relationship);return map;},{} as CharacterConnectionMap);
 export const relationshipTypeLabels:Record<RelationshipType,string>={family:"Family",marriage:"Marriage",devotion:"Devotion",service:"Service",teacher:"Teacher",alliance:"Alliance",friendship:"Friendship",opposition:"Opposition",messenger:"Messenger",protector:"Protector",guidance:"Guidance"};

@@ -7,7 +7,7 @@ import { AuthDialog } from "@/components/auth-dialog";
 import { useProgress } from "@/components/progress-provider";
 import { Button } from "@/components/ui/button";
 
-const links = [["Map", "/journey/hanuman"], ["Journey", "/journey"], ["Characters", "/characters"], ["Connections", "/connections"]];
+const links = [["Map", "/journey/hanuman"], ["Journey", "/journey"], ["Characters", "/characters"], ["Connections", "/connections"], ["Progress", "/progress"]];
 
 export function SiteHeader() {
   const [authOpen, setAuthOpen] = useState(false);

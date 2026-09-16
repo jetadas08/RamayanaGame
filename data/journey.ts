@@ -1,5 +1,7 @@
 import type { JourneyNode, JourneyProgressState } from "@/lib/types";
 import {activitiesByNode,rewardsByNode} from "@/data/encounter-activities";
+import {hanumanNodeScenes} from "@/data/node-scenes";
+import {hanumanNodeCompletion} from "@/data/node-completion";
 
 const choices = (...labels: string[]) =>
   labels.map((label, index) => ({ id: String.fromCharCode(97 + index), label }));
@@ -8,9 +10,10 @@ export const initialProgress: JourneyProgressState = {
   currentNode: "HJ-01",
   completedNodes: [],
   unlockedCharacters: ["Hanumān", "Rāma"],
-  unlockedRelationships: ["REL-RAMA-HANUMAN-SERVICE"],
+  unlockedRelationships: [],
   answeredChallenges: {},
   relationshipChallengeAnswers: {},
+  characterChallengeAnswers: {},
   sceneDiscoveries: [],
   hiddenDiscoveries: [],
   discoveredObjects: [],
@@ -21,7 +24,7 @@ export const initialProgress: JourneyProgressState = {
   difficulty: "explorer",
 };
 
-export const journeyNodes: JourneyNode[] = [
+const journeyNodeRecords: Omit<JourneyNode,"scene"|"completionTakeaway"|"nextNodeTeaser">[] = [
   {
     id: "HJ-01", slug: "shore-of-decision", number: 1, title: "The Shore of Decision", eyebrow: "The search reaches its limit", place: "Southern seashore", coordinates: { x: 31, y: 56 }, mapPosition: [77.55, 8.3], confidence: "E", displayType: "region",
     excerpt: "At the edge of the sea, the search party must choose between despair and resolve.",
@@ -123,6 +126,8 @@ export const journeyNodes: JourneyNode[] = [
     challenge: { prompt: "What does Hanumān bring back most importantly?", choices: choices("Proof, Sītā's message, and renewed hope", "A crown from Laṅkā", "A map drawn by Rāvaṇa"), answer: "a", explanation: "He returns with knowledge, recognition, and the trust needed for the next stage of the epic." },
   },
 ];
+
+export const journeyNodes:JourneyNode[]=journeyNodeRecords.map(node=>({...node,scene:hanumanNodeScenes[node.id],...hanumanNodeCompletion[node.id]}));
 
 for(const node of journeyNodes){node.activities=activitiesByNode[node.id]??[];node.rewards=rewardsByNode[node.id]??[];}
 

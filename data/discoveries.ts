@@ -105,8 +105,8 @@ const portraits:Record<string,CharacterPortraitData>={
  "Trijaṭā":{src:"/images/characters/trijata-v2.png",position:"50% 27%",thumbnailPosition:"50% 25%"},
  "Akṣa Kumāra":{src:"/images/characters/lanka-sprite.png",position:"50% 38%",thumbnailPosition:"50% 36%",sprite:{column:1,row:2,columns:6,rows:3}},
  "Indrajit":{src:"/images/characters/indrajit-v2.png",position:"50% 23%",thumbnailPosition:"50% 27%"},
- "Rāvaṇa":{src:"/images/characters/ravana-v2.png",position:"50% 25%",thumbnailPosition:"50% 28%"},
- "Lakṣmaṇa":{src:"/images/characters/lanka-sprite.png",position:"50% 36%",thumbnailPosition:"50% 35%",sprite:{column:4,row:2,columns:6,rows:3}},
+ "Rāvaṇa":{src:"/images/characters/ravana-v3.png",position:"50% 25%",thumbnailPosition:"50% 28%"},
+ "Lakṣmaṇa":{src:"/images/characters/lakshmana-v2.png",position:"50% 30%",thumbnailPosition:"50% 28%"},
  "Sugrīva":{src:"/images/characters/lanka-sprite.png",position:"50% 39%",thumbnailPosition:"50% 37%",sprite:{column:5,row:2,columns:6,rows:3}},
 };
 const characterNames=Array.from(new Set([...initialProgress.unlockedCharacters,...journeyNodes.flatMap(n=>n.characters)]));
