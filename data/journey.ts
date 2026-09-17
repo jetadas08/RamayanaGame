@@ -7,6 +7,9 @@ const choices = (...labels: string[]) =>
   labels.map((label, index) => ({ id: String.fromCharCode(97 + index), label }));
 
 export const initialProgress: JourneyProgressState = {
+  schemaVersion: 2,
+  globalKnowledge: {characterIds:["hanuman","rama"],relationshipIds:[],placeIds:[],sacredObjectIds:[],discoveryIds:[],sourceIds:[]},
+  characterJourneys: {hanuman:{campaignId:"hanuman",completedEventIds:[],answeredActivityIds:[],masteryStars:0,completedChapterIds:[]}},
   currentNode: "HJ-01",
   completedNodes: [],
   unlockedCharacters: ["Hanumān", "Rāma"],

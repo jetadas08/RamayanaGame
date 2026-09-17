@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Check, Compass, Mountain, Bird, Flame, Crown, Flower2, Swords, Shell, Waves, Footprints, Gem, Mail, House, Users, Wind, ZoomIn, ZoomOut, Star, Info, X, Share2, Route, Maximize2, MoveHorizontal } from "lucide-react";
+import { ArrowLeft, Check, Compass, Mountain, Bird, Flame, Crown, Flower2, Swords, Shell, Waves, Footprints, Gem, Mail, House, Users, Wind, ZoomIn, ZoomOut, Star, Info, X, Share2, Route, Maximize2, MoveHorizontal } from "lucide-react";
 import { geoMercator, geoPath } from "d3-geo";
 import { feature } from "topojson-client";
 import countries from "world-atlas/countries-50m.json";
@@ -16,6 +16,7 @@ import {CharacterPortrait} from "@/components/character-portrait";
 import {characters} from "@/data/discoveries";
 import {characterNameById} from "@/data/character-ids";
 import {relationshipTypeLabels,relationships} from "@/data/relationships";
+import {hanumanCampaignChapters} from "@/data/hanuman-campaign";
 
 const icons = [Users, Bird, Shell, Footprints, Mountain, Shell, Waves, House, Gem, Flower2, Mail, Swords, Crown, Flame, Wind];
 // Story-layout coordinates: calibrated to ensure distinct pin separation and no badge collisions
@@ -38,9 +39,12 @@ const storyPositions = [
 ];
 type ActiveReveal={kind:"character";name:string}|{kind:"relationship";id:string}|{kind:"route"}|{kind:"complete"};
 
-export function JourneyMap() {
+export function JourneyMap({chapterId,onBack}:{chapterId?:string;onBack?:()=>void}={}) {
   const { progress,pendingMapUnlocks,acknowledgeMapUnlock } = useProgress();
-  const [selection, setSelection] = useState<string | null>(null);
+  const chapter=hanumanCampaignChapters.find(item=>item.id===chapterId);
+  const visibleNodeIds=useMemo(()=>new Set(chapter?.playableNodeIds??journeyNodes.map(node=>node.id)),[chapter]);
+  const initialNode=chapter?.playableNodeIds.includes(progress.currentNode)?progress.currentNode:chapter?.playableNodeIds[0]??progress.currentNode;
+  const [selection, setSelection] = useState<string | null>(initialNode);
   const [zoom, setZoom] = useState(false);
   const [fitOverview, setFitOverview] = useState(false);
   const [showSwipeHint, setShowSwipeHint] = useState(true);
@@ -48,7 +52,7 @@ export function JourneyMap() {
   const [accuracyOpen,setAccuracyOpen]=useState(false);
   const [activeReveal,setActiveReveal]=useState<ActiveReveal|null>(null);
   const pendingReveal=pendingMapUnlocks[0];
-  const selected = journeyNodes.find(n => n.id === (selection ?? progress.currentNode)) ?? journeyNodes[0];
+  const selected = journeyNodes.find(n => n.id === (selection ?? initialNode)) ?? journeyNodes[0];
   const available = journeyNodes.findIndex(n => n.id === progress.currentNode);
   const beginCue = progress.completedNodes.length === 0;
   const map = useMemo(() => {
@@ -75,14 +79,17 @@ export function JourneyMap() {
     const finish=window.setTimeout(()=>{setActiveReveal(null);acknowledgeMapUnlock(pendingReveal.id);},duration*Math.max(sequence.length,1));
     return()=>{timers.forEach(window.clearTimeout);window.clearTimeout(finish);};
   },[pendingReveal,acknowledgeMapUnlock]);
+  useEffect(()=>{setSelection(chapter?.playableNodeIds.includes(progress.currentNode)?progress.currentNode:chapter?.playableNodeIds[0]??progress.currentNode);},[chapterId,chapter,progress.currentNode]);
   function chooseNode(id:string){setSelection(id);}
   const revealNode=pendingReveal&&journeyNodes.find(node=>node.id===pendingReveal.nodeId);
   const revealPoint=revealNode?map.points[revealNode.number-1]:undefined;
   const revealCharacter=activeReveal?.kind==="character"?characters.find(character=>character.name===activeReveal.name):undefined;
   const revealRelationship=activeReveal?.kind==="relationship"?relationships.find(relationship=>relationship.id===activeReveal.id):undefined;
-  const journeyComplete=progress.completedNodes.length===journeyNodes.length;
-  const progressPercent=Math.round(progress.completedNodes.length/journeyNodes.length*100);
-  const currentNode=journeyNodes[available]??journeyNodes[0];
+  const chapterCompleted=chapter?.playableNodeIds.filter(id=>progress.completedNodes.includes(id)).length??progress.completedNodes.length;
+  const chapterTotal=chapter?.playableNodeIds.length??journeyNodes.length;
+  const journeyComplete=chapterCompleted===chapterTotal;
+  const progressPercent=Math.round(chapterCompleted/chapterTotal*100);
+  const currentNode=chapter?.playableNodeIds.includes(progress.currentNode)?journeyNodes[available]:journeyNodes.find(node=>chapter?.playableNodeIds.includes(node.id)&&!progress.completedNodes.includes(node.id))??selected;
   const hanuman=characters.find(character=>character.id==="hanuman");
   const rama=characters.find(character=>character.id==="rama");
 
@@ -101,7 +108,7 @@ export function JourneyMap() {
   }, [selection, progress.currentNode, map.points]);
 
   return <div className="atlas-page">
-    <div className="atlas-heading"><div><p className="eyebrow">Devotion · Courage · A higher purpose</p><h1>Hanumān Journey Map</h1><p>A passage through the epic, across sea and sacred memory.</p></div><div className={`atlas-heading-progress ${journeyComplete?"is-complete":""}`}><div className="atlas-progress-seal" style={{"--journey-progress":`${progressPercent*3.6}deg`} as React.CSSProperties}><Compass size={26}/></div><span><small>Journey progress</small>{progress.completedNodes.length}<small> / 15 discovered</small><b className="atlas-progress-line"><i style={{width:`${progressPercent}%`}}/></b><em>{journeyComplete?"Journey complete":`${currentNode.id} · ${currentNode.title}`}</em></span></div></div>
+    <div className="atlas-heading"><div>{onBack&&<button className="atlas-back-to-campaign" type="button" onClick={onBack}><ArrowLeft/>Campaign Map</button>}<p className="eyebrow">Chapter Map · {chapter?`Chapter ${chapter.number}`:"Mission to Laṅkā"}</p><h1>{chapter?.title??"Mission to Laṅkā Map"}</h1><p>{chapter?.description??"The current playable center of Hanumān’s larger character campaign."}</p></div><div className={`atlas-heading-progress ${journeyComplete?"is-complete":""}`}><div className="atlas-progress-seal" style={{"--journey-progress":`${progressPercent*3.6}deg`} as React.CSSProperties}><Compass size={26}/></div><span><small>Chapter progress</small>{chapterCompleted}<small> / {chapterTotal} discovered</small><b className="atlas-progress-line"><i style={{width:`${progressPercent}%`}}/></b><em>{journeyComplete?"Chapter complete":`${currentNode.id} · ${currentNode.title}`}</em></span></div></div>
     <div className="atlas-stage">
     <aside className="atlas-devotional-figure" aria-label="Hanumān, guardian of the journey">{hanuman?.portrait&&<div className="atlas-figure-portrait"><CharacterPortrait name={hanuman.name} portrait={hanuman.portrait} usage="detail"/></div>}<div className="atlas-figure-copy"><span>✦</span><strong>Faith moves mountains</strong><small>Across oceans.<br/>Within yourself.</small></div></aside>
     <div className="atlas-frame">
@@ -130,7 +137,7 @@ export function JourneyMap() {
             <text className="atlas-water" x="415" y="352">GULF OF MANNAR</text>
             <text className="atlas-water" x="250" y="719">INDIAN OCEAN</text>
             <g className={`atlas-progress-route ${journeyComplete?"journey-complete":""}`} aria-hidden="true">
-              {map.points.slice(0,-1).map(([x,y],index)=>{const [nextX,nextY]=map.points[index+1],completed=index<progress.completedNodes.length,isActive=index===Math.max(0,available-1),isNew=activeReveal?.kind==="route"&&pendingReveal?.nextNodeId===journeyNodes[index+1].id;return <path key={journeyNodes[index].id} d={`M ${x} ${y} L ${nextX} ${nextY}`} className={`${completed?"is-completed":""} ${isActive?"is-active-route":""} ${isNew?"is-new":""}`}/>;})}
+              {map.points.slice(0,-1).map(([x,y],index)=>{const current=journeyNodes[index],next=journeyNodes[index+1];if(!visibleNodeIds.has(current.id)||!visibleNodeIds.has(next.id))return null;const [nextX,nextY]=map.points[index+1],completed=index<progress.completedNodes.length,isActive=index===Math.max(0,available-1),isNew=activeReveal?.kind==="route"&&pendingReveal?.nextNodeId===next.id;return <path key={current.id} d={`M ${x} ${y} L ${nextX} ${nextY}`} className={`${completed?"is-completed":""} ${isActive?"is-active-route":""} ${isNew?"is-new":""}`}/>;})}
             </g>
             <path className="atlas-route" d="M340 430 Q390 445 435 468 T510 502 Q552 503 580 460 Q650 418 672 380" markerEnd="url(#route-arrow)"/>
             <text className="atlas-route-label" x="350" y="590">Hanumān’s ocean crossing</text>
@@ -141,6 +148,7 @@ export function JourneyMap() {
             <g transform="translate(925 674)" className="atlas-compass"><circle r="34"/><circle r="27"/><path d="M0-42V42M-42 0H42M-24-24L24 24M24-24L-24 24"/><path d="M0-35L8 0L0 35L-8 0Z" fill="#deb873"/><text y="-49" textAnchor="middle">N</text></g>
           </svg>
           {journeyNodes.map((node,index) => {
+            if(!visibleNodeIds.has(node.id))return null;
             const Icon = icons[index]; const [x,y] = map.points[index];
             const isSelected = selected.id === node.id;
             const isLocked = index > available;

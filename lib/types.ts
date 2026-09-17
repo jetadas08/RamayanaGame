@@ -141,7 +141,114 @@ export interface JourneyNode {
   nextNodeTeaser?: string;
 }
 
+export type CharacterPathId = NarrativeContext;
+export type KandaId = "kiskindha" | "sundara" | "yuddha";
+export type CampaignId = "hanuman";
+export type EventContentStatus = "playable" | "planned" | "sourceReviewRequired";
+export type CharacterPathImportance = "major" | "supporting" | "contextual" | "indirect";
+export type CharacterPathPerspective = "primary" | "secondary" | "contextual";
+
+export interface CharacterPathParticipation {
+  pathId: CharacterPathId;
+  characterId: string;
+  importance: CharacterPathImportance;
+  perspective: CharacterPathPerspective;
+}
+
+/** A story event is reusable across character campaigns; JourneyNode remains the playable UI record. */
+export interface RamayanaEvent {
+  id: string;
+  title: string;
+  canonicalOrder: number;
+  kanda: KandaId;
+  chapterId: string;
+  placeIds: string[];
+  characterIds: string[];
+  primaryCharacterIds: string[];
+  supportingCharacterIds: string[];
+  relationshipIds: string[];
+  sacredObjectIds: string[];
+  sourceRefs: SourceReference[];
+  activityIds: string[];
+  sceneArtwork?: {locked: string; revealed: string; assetStatus: "final" | "placeholder"};
+  characterPaths: CharacterPathParticipation[];
+  narrativeContexts: NarrativeContext[];
+  unlocks: string[];
+  completionTakeaway: string;
+  contentStatus: EventContentStatus;
+  sourceReviewRequired: boolean;
+  playableNodeId?: string;
+  planningNote?: string;
+}
+
+export interface CampaignChapter {
+  id: string;
+  number: number;
+  title: string;
+  kanda: KandaId;
+  description: string;
+  theme: "earth" | "ocean" | "lanka" | "return";
+  eventIds: string[];
+  playableNodeIds: string[];
+  status: "available" | "mixed" | "planned";
+  completionCopy: string;
+}
+
+export interface CampaignMapLandmark {
+  id: string;
+  name: string;
+  x: number;
+  y: number;
+  kind: "city" | "region" | "mountain" | "coast" | "island" | "strait";
+  confidence: ConfidenceLevel;
+  description: string;
+}
+
+export interface CampaignRouteSegment {
+  id: string;
+  chapterId: string;
+  from: [number,number];
+  to: [number,number];
+  control?: [number,number];
+  routeType: "land" | "leap" | "setu" | "return" | "narrative";
+  label: string;
+}
+
+export interface CharacterCampaign {
+  id: CampaignId;
+  characterId: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  chapterIds: string[];
+  playableNodeIds: string[];
+  status: "active" | "planned";
+  completionTitle: string;
+  completionCopy: string;
+  futurePathIds: CharacterPathId[];
+}
+
+export interface GlobalKnowledgeProgress {
+  characterIds: string[];
+  relationshipIds: string[];
+  placeIds: string[];
+  sacredObjectIds: string[];
+  discoveryIds: string[];
+  sourceIds: SourceId[];
+}
+
+export interface CharacterJourneyProgress {
+  campaignId: CampaignId;
+  completedEventIds: string[];
+  answeredActivityIds: string[];
+  masteryStars: number;
+  completedChapterIds: string[];
+}
+
 export interface JourneyProgressState {
+  schemaVersion: 2;
+  globalKnowledge: GlobalKnowledgeProgress;
+  characterJourneys: Partial<Record<CharacterPathId, CharacterJourneyProgress>>;
   currentNode: string;
   completedNodes: string[];
   unlockedCharacters: string[];

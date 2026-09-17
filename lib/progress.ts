@@ -1,4 +1,4 @@
-import type { Difficulty, JourneyProgressState, JourneyNode } from "@/lib/types";
+import type { CharacterJourneyProgress, Difficulty, JourneyProgressState, JourneyNode, SourceId } from "@/lib/types";
 import { initialProgress, journeyNodes } from "@/data/journey";
 import { achievements, relationships } from "@/data/discoveries";
 import { challengeFor, challengeKey, encodeChallengeAnswer } from "@/data/challenges";
@@ -7,7 +7,8 @@ import {relationshipAchievementNames,relationshipChallengeById} from "@/data/rel
 import {availableRelationshipIds} from "@/data/relationships";
 import {activityById,activityUnlocks,discoveryKey,explorationAchievementNames,sacredObjects,validDiscoveryIds} from "@/data/encounter-activities";
 import {characterChallengeById,characterChallenges,characterKnowledgeAchievementNames} from "@/data/character-knowledge";
-import {characterNameById} from "@/data/character-ids";
+import {characterIdByName,characterNameById} from "@/data/character-ids";
+import {hanumanCampaignChapters,ramayanaEventById} from "@/data/hanuman-campaign";
 const levels:Difficulty[]=["explorer","seeker","scholar"];
 export function nodeMastery(progress:Pick<JourneyProgressState,"answeredChallenges">,node:JourneyNode){
  return levels.map(level=>storedMasteryIsCorrect(node,level,progress.answeredChallenges[challengeKey(node.id,level)]));
@@ -48,7 +49,23 @@ export function normalizeProgress(input: unknown): JourneyProgressState {
  const suppliedRelationships=Array.isArray(raw.unlockedRelationships)?raw.unlockedRelationships.filter((id):id is string=>typeof id==="string"&&relationships.some(relationship=>relationship.id===id)):[];
  const relationshipChallengeRewards=Object.entries(relationshipAnswers).filter(([id,answer])=>relationshipChallengeById(id)?.answer===answer).flatMap(([id])=>relationshipChallengeById(id)?.relationshipIds??[]);
  const characterRelationshipRewards=characterChallenges.filter(challenge=>characterAnswers[challenge.id]===challenge.answer).flatMap(challenge=>challenge.unlockRelationshipIds??[]).filter(id=>availableRelationships.has(id));
- const normalized:JourneyProgressState={currentNode:journeyNodes[Math.min(count,14)].id,completedNodes:completed.map(n=>n.id),
+ const completedIds=completed.map(n=>n.id),masteryStars=correctAnswerCount(progressForMastery);
+ const rawGlobal=raw.globalKnowledge&&typeof raw.globalKnowledge==="object"?raw.globalKnowledge:initialProgress.globalKnowledge;
+ const sourceIds=new Set<SourceId>(["VR-GP","VR-HPS","RCM-GP","TRAD"]);
+ const unionStrings=(...values:unknown[])=>Array.from(new Set(values.flatMap(value=>Array.isArray(value)?value.filter((item):item is string=>typeof item==="string"):[])));
+ const rawJourneys=raw.characterJourneys&&typeof raw.characterJourneys==="object"?raw.characterJourneys:{};
+ const preservedJourneys:Partial<Record<"hanuman"|"rama"|"sita"|"bharata"|"ravana",CharacterJourneyProgress>>={};
+ for(const pathId of ["rama","sita","bharata","ravana"] as const){const value=rawJourneys[pathId];if(value&&typeof value==="object"&&value.campaignId==="hanuman")preservedJourneys[pathId]=value;}
+ const normalized:JourneyProgressState={schemaVersion:2,
+ globalKnowledge:{
+  characterIds:unionStrings(rawGlobal.characterIds,[...initialProgress.unlockedCharacters,...completed.flatMap(n=>n.characters),...activityRewards.characters].map(name=>characterIdByName[name]).filter(Boolean)),
+  relationshipIds:unionStrings(rawGlobal.relationshipIds,suppliedRelationships,relationshipChallengeRewards,characterRelationshipRewards),
+  placeIds:unionStrings(rawGlobal.placeIds,completedIds.flatMap(id=>ramayanaEventById[id]?.placeIds??[])),
+  sacredObjectIds:unionStrings(rawGlobal.sacredObjectIds,discoveredObjects),discoveryIds:unionStrings(rawGlobal.discoveryIds,sceneDiscoveries),
+  sourceIds:unionStrings(rawGlobal.sourceIds,completed.flatMap(node=>node.sourceLabels)).filter((id):id is SourceId=>sourceIds.has(id as SourceId)),
+ },
+ characterJourneys:{...preservedJourneys,hanuman:{campaignId:"hanuman",completedEventIds:completedIds,answeredActivityIds:Object.keys(answers),masteryStars,completedChapterIds:hanumanCampaignChapters.filter(chapter=>chapter.playableNodeIds.length>0&&chapter.playableNodeIds.every(id=>completedIds.includes(id))).map(chapter=>chapter.id)}},
+ currentNode:journeyNodes[Math.min(count,journeyNodes.length-1)].id,completedNodes:completedIds,
  unlockedCharacters:Array.from(new Set([...initialProgress.unlockedCharacters,...completed.flatMap(n=>n.characters),...activityRewards.characters])),
  unlockedRelationships:Array.from(new Set([...suppliedRelationships,...relationshipChallengeRewards.filter(id=>availableRelationships.has(id)),...characterRelationshipRewards])),
  answeredChallenges:answers,relationshipChallengeAnswers:relationshipAnswers,characterChallengeAnswers:characterAnswers,sceneDiscoveries,hiddenDiscoveries,discoveredObjects,predictionChoices,storyMemoryAnswers,nodeAttempts,achievements:Array.from(new Set([...achievements.filter(a=>a.node<=count&&(!a.perfectNode||nodeMastery(progressForMastery,journeyNodes[a.perfectNode-1]).every(Boolean))&&(!a.totalStars||correctAnswerCount(progressForMastery)>=a.totalStars)).map(a=>a.name),...relationshipAchievementNames(relationshipAnswers),...explorationAchievementNames(sceneDiscoveries,discoveredObjects)])),
@@ -87,5 +104,5 @@ export function completeChallenge(current:JourneyProgressState,node:JourneyNode,
 }
 export function mergeProgress(a:unknown,b:unknown){
  const left=normalizeProgress(a),right=normalizeProgress(b);
- return normalizeProgress({...right,completedNodes:Array.from(new Set([...left.completedNodes,...right.completedNodes])),unlockedRelationships:Array.from(new Set([...left.unlockedRelationships,...right.unlockedRelationships])),answeredChallenges:{...left.answeredChallenges,...right.answeredChallenges},relationshipChallengeAnswers:{...left.relationshipChallengeAnswers,...right.relationshipChallengeAnswers},characterChallengeAnswers:{...left.characterChallengeAnswers,...right.characterChallengeAnswers},sceneDiscoveries:Array.from(new Set([...left.sceneDiscoveries,...right.sceneDiscoveries])),hiddenDiscoveries:Array.from(new Set([...left.hiddenDiscoveries,...right.hiddenDiscoveries])),discoveredObjects:Array.from(new Set([...left.discoveredObjects,...right.discoveredObjects])),predictionChoices:{...left.predictionChoices,...right.predictionChoices},storyMemoryAnswers:{...left.storyMemoryAnswers,...right.storyMemoryAnswers},nodeAttempts:Object.fromEntries(journeyNodes.map(node=>[node.id,Math.max(left.nodeAttempts[node.id]??0,right.nodeAttempts[node.id]??0)]))});
+ return normalizeProgress({...right,globalKnowledge:{characterIds:[...left.globalKnowledge.characterIds,...right.globalKnowledge.characterIds],relationshipIds:[...left.globalKnowledge.relationshipIds,...right.globalKnowledge.relationshipIds],placeIds:[...left.globalKnowledge.placeIds,...right.globalKnowledge.placeIds],sacredObjectIds:[...left.globalKnowledge.sacredObjectIds,...right.globalKnowledge.sacredObjectIds],discoveryIds:[...left.globalKnowledge.discoveryIds,...right.globalKnowledge.discoveryIds],sourceIds:[...left.globalKnowledge.sourceIds,...right.globalKnowledge.sourceIds]},completedNodes:Array.from(new Set([...left.completedNodes,...right.completedNodes])),unlockedRelationships:Array.from(new Set([...left.unlockedRelationships,...right.unlockedRelationships])),answeredChallenges:{...left.answeredChallenges,...right.answeredChallenges},relationshipChallengeAnswers:{...left.relationshipChallengeAnswers,...right.relationshipChallengeAnswers},characterChallengeAnswers:{...left.characterChallengeAnswers,...right.characterChallengeAnswers},sceneDiscoveries:Array.from(new Set([...left.sceneDiscoveries,...right.sceneDiscoveries])),hiddenDiscoveries:Array.from(new Set([...left.hiddenDiscoveries,...right.hiddenDiscoveries])),discoveredObjects:Array.from(new Set([...left.discoveredObjects,...right.discoveredObjects])),predictionChoices:{...left.predictionChoices,...right.predictionChoices},storyMemoryAnswers:{...left.storyMemoryAnswers,...right.storyMemoryAnswers},nodeAttempts:Object.fromEntries(journeyNodes.map(node=>[node.id,Math.max(left.nodeAttempts[node.id]??0,right.nodeAttempts[node.id]??0)]))});
 }
