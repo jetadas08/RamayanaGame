@@ -21,11 +21,11 @@ export const completionMasteryCopy=(stars:number)=>stars===3?"3 of 3 mastery sta
 export function encounterCompletionRewards(node:JourneyNode,progress:JourneyProgressState,scene:{earned:number;total:number}):EncounterCompletionReward[]{
  const rewards:EncounterCompletionReward[]=[];
  const undiscoveredHiddenCharacters=new Set((node.activities??[]).flatMap(activity=>activity.type==="sceneDiscovery"&&activity.hidden?activity.hotspots.filter(hotspot=>hotspot.unlockCharacter&&!progress.sceneDiscoveries.includes(`${activity.id}:${hotspot.id}`)).map(hotspot=>hotspot.unlockCharacter!):[]));
- const newCharacters=characters.filter(character=>character.unlockNode===node.number&&progress.unlockedCharacters.includes(character.name)&&!undiscoveredHiddenCharacters.has(character.name));
+ const newCharacters=characters.filter(character=>character.appearances[0]===node.id&&progress.unlockedCharacters.includes(character.name)&&!undiscoveredHiddenCharacters.has(character.name));
  if(newCharacters.length)rewards.push({id:`${node.id}-characters`,type:"character",label:newCharacters.length===1?"Character discovered":"Characters discovered",detail:joined(newCharacters.map(character=>character.name)),href:newCharacters.length===1?`/characters/${newCharacters[0].id}`:"/characters"});
 
- const available=new Set(availableRelationshipIds(progress.completedNodes.length));
- const nodeRelationships=relationships.filter(relationship=>relationship.eventId===node.id&&available.has(relationship.id)&&!undiscoveredHiddenCharacters.has(characterNameById[relationship.fromCharacterId]??"")&&!undiscoveredHiddenCharacters.has(characterNameById[relationship.toCharacterId]??""));
+ const available=new Set(availableRelationshipIds(progress.completedNodes.length,progress.meetingCompletedNodes.length,progress.warCompletedNodes.length,progress.herbsCompletedNodes.length,progress.finaleCompletedNodes.length));
+ const nodeRelationships=relationships.filter(relationship=>(relationship.discoverableFrom.includes(node.id)||(node.id.startsWith("HFM-")&&availableRelationshipIds(0,node.number).includes(relationship.id)&&!availableRelationshipIds(0,node.number-1).includes(relationship.id)))&&available.has(relationship.id)&&!undiscoveredHiddenCharacters.has(characterNameById[relationship.fromCharacterId]??"")&&!undiscoveredHiddenCharacters.has(characterNameById[relationship.toCharacterId]??""));
  const relationshipText=(relationship:typeof relationships[number])=>`${characterNameById[relationship.fromCharacterId]??relationship.fromCharacterId} ${relationship.label} ${characterNameById[relationship.toCharacterId]??relationship.toCharacterId}`;
  const discovered=nodeRelationships.filter(relationship=>progress.unlockedRelationships.includes(relationship.id));
  const clues=nodeRelationships.filter(relationship=>!progress.unlockedRelationships.includes(relationship.id));
@@ -38,6 +38,6 @@ export function encounterCompletionRewards(node:JourneyNode,progress:JourneyProg
  const knowledge=characterProfileFields.filter(field=>field.unlock.kind==="journey"&&field.unlock.nodeId===node.id&&characterFieldIsUnlocked(field,progress)&&!undiscoveredHiddenCharacters.has(characterNameById[field.characterId]??""));
  if(knowledge.length){const names=Array.from(new Set(knowledge.map(field=>characterNameById[field.characterId]).filter((name):name is string=>Boolean(name))));rewards.push({id:`${node.id}-knowledge`,type:"characterKnowledge",label:"Character knowledge added",detail:`${joined(names)} · ${knowledge.length} ${knowledge.length===1?"profile fact":"profile facts"}`,href:names.length===1?`/characters/${knowledge[0].characterId}`:"/characters"});}
 
- for(const achievement of achievements.filter(item=>item.node===node.number&&progress.achievements.includes(item.name)))rewards.push({id:`achievement-${achievement.name}`,type:"achievement",label:"Achievement earned",detail:achievement.name,href:"/progress"});
+ for(const achievement of achievements.filter(item=>node.id.startsWith("HJ-")&&item.node===node.number&&progress.achievements.includes(item.name)))rewards.push({id:`achievement-${achievement.name}`,type:"achievement",label:"Achievement earned",detail:achievement.name,href:"/progress"});
  return rewards;
 }

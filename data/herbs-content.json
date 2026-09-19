@@ -1,0 +1,154 @@
+[
+  {
+    "id": "HFH-01",
+    "title": "Jāmbavān Calls for Hanumān",
+    "story": "After Indrajit’s Brahma weapon strikes the battlefield, Rāma, Lakṣmaṇa, and vast numbers of vānar warriors lie incapacitated. Hanumān and Vibhīṣaṇa remain conscious and search by torchlight for Jāmbavān. When they find him, Jāmbavān first asks whether Hanumān is alive. He explains that if Hanumān survives, there is still hope for the whole army. He then entrusts Hanumān with the rescue: travel north to the Himalayan herbal mountain and bring four life-restoring medicines.",
+    "explore": "Torchlight Search: the player searches a dark battlefield for Jāmbavān, revealing wounded leaders and the two active searchers, Hanumān and Vibhīṣaṇa.",
+    "interaction": "Hope Anchor: after finding Jāmbavān, the player identifies why he asks specifically for Hanumān before the mission is revealed.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "Whom does Jāmbavān ask about when Vibhīṣaṇa finds him?",
+        "items": [
+          "A. Hanumān",
+          "B. Rāvaṇa",
+          "C. Bharata",
+          "D. Trijaṭā"
+        ],
+        "answer": "A. Hanumān",
+        "feedback": "Jāmbavān explains that Hanumān’s survival means there is still hope for the incapacitated army."
+      },
+      {
+        "format": "Multi-select",
+        "prompt": "What does Jāmbavān ask Hanumān to do?",
+        "items": [
+          "A. Travel to the Himalayan region",
+          "B. Find the herbal mountain",
+          "C. Bring four named medicinal herbs",
+          "D. Return to Kiṣkindhā and end the campaign"
+        ],
+        "answer": "A, B, and C",
+        "feedback": "The mission is explicitly medicinal and urgent: Hanumān is sent to obtain four herbs for the stricken army."
+      },
+      {
+        "format": "Matching",
+        "prompt": "Match the four herbs in Yuddha Kāṇḍa 74 with their described purpose:",
+        "items": [
+          "Mṛta Sañjīvanī → ?",
+          "Viśalyakaraṇī → ?",
+          "Suvarṇakaraṇī → ?",
+          "Sandhānī → ?"
+        ],
+        "answer": "Mṛta Sañjīvanī → restoring life; Viśalyakaraṇī → removing weapons/healing weapon wounds; Suvarṇakaraṇī → restoring natural complexion; Sandhānī → joining fractures/severed parts",
+        "feedback": "The Vālmīki episode names four herbs. This is more specific than the later popular shorthand of 'the Sañjīvanī herb.'"
+      }
+    ],
+    "unlocks": "Character Knowledge: Jāmbavān — guidance under crisis; Hanumān — protector/rescue agent. Connection challenge: Jāmbavān → Hanumān = Guidance. Vibhīṣaṇa ↔ Hanumān = Alliance reinforced.",
+    "takeaway": "Jāmbavān does not praise Hanumān for what he has already done; he calls on him because others still need him.",
+    "teaser": "Next: The First Mountain Rescue — Hanumān leaves the battlefield and races toward the northern medicinal mountain.",
+    "lockedPrompt": "Wide cinematic night battlefield, deep indigo sky, scattered torches among fallen vānar warriors, Hanumān and Vibhīṣaṇa moving through the darkness, Jāmbavān still hidden, solemn and non-gory, no text.",
+    "revealedPrompt": "Wide cinematic torch-lit scene, Hanumān kneeling respectfully beside the wounded Jāmbavān while Vibhīṣaṇa stands nearby, incapacitated vānar leaders and the battlefield receding into darkness, ember gold against indigo, mature devotional epic style, no gore, no text.",
+    "sourceNote": "Primary VR source is Yuddha 74. Suṣeṇa is present among the wounded in this episode, but he does not issue this first herb mission; Jāmbavān does.\n"
+  },
+  {
+    "id": "HFH-02",
+    "title": "The First Mountain Rescue",
+    "story": "Hanumān launches northward and reaches the Himalayan region described by Jāmbavān. He finds the radiant herbal mountain between the named peaks, but the four medicines disappear from his sight and he cannot obtain them individually. Rather than return empty-handed, Hanumān uproots the mountain peak and carries it back to Laṅkā. The fragrance of the medicines restores Rāma, Lakṣmaṇa, and the vānar warriors. Hanumān then returns the mountain to the north.",
+    "explore": "Mountain Discovery: the player identifies the glowing medicinal mountain among the northern peaks, then searches for the four herbs as they become unavailable/hidden.",
+    "interaction": "Problem-Solving Choice: 'The herbs cannot be obtained individually. What does Hanumān do in the text?' The canonical action is revealed after selection.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "What does Hanumān do when he cannot obtain the four herbs individually?",
+        "items": [
+          "A. Returns empty-handed",
+          "B. Carries the mountain peak itself",
+          "C. Sends Vibhīṣaṇa instead",
+          "D. Waits until morning"
+        ],
+        "answer": "B. Carries the mountain peak itself",
+        "feedback": "Hanumān changes the scale of the solution rather than abandoning the mission."
+      },
+      {
+        "format": "Sequence",
+        "prompt": "Put the first medicinal mission in order:",
+        "items": [
+          "1. The warriors revive",
+          "2. Hanumān reaches the medicinal mountain",
+          "3. Jāmbavān gives the mission",
+          "4. Hanumān carries the mountain back"
+        ],
+        "answer": "3 → 2 → 4 → 1",
+        "feedback": "This keeps the first rescue distinct from the later Lakṣmaṇa/Suṣeṇa episode."
+      },
+      {
+        "format": "Source comparison",
+        "prompt": "Which statement best reflects Yuddha Kāṇḍa 74?",
+        "items": [
+          "A. Only Lakṣmaṇa is healed by one unnamed herb",
+          "B. Rāma, Lakṣmaṇa, and the vānar warriors are restored through the medicinal mountain’s herbs",
+          "C. Suṣeṇa sends Hanumān in this first mission",
+          "D. Hanumān brings the physician from Laṅkā"
+        ],
+        "answer": "B. Rāma, Lakṣmaṇa, and the vānar warriors are restored through the medicinal mountain’s herbs",
+        "feedback": "This is the first Vālmīki medicinal mission. The later, more Lakṣmaṇa-centered rescue is a separate episode in Yuddha 101."
+      }
+    ],
+    "unlocks": "Place knowledge: Himalayan medicinal mountain as narrative destination. Character Knowledge: Hanumān — improvisation, endurance, lifesaving service. Story artifact knowledge: four medicinal herbs; do not treat the mountain as a portable Sacred Object.",
+    "takeaway": "When the exact solution cannot be reached, Hanumān refuses to return without help.",
+    "teaser": "Next: Suṣeṇa and the Second Rescue — later in the war, Lakṣmaṇa falls again and the physician calls Hanumān to the mountain once more.",
+    "lockedPrompt": "Wide cinematic northern mountain range at night/pre-dawn, luminous herbal peak partly veiled, tiny Hanumān searching among immense cliffs, herbs hidden or indistinct, cobalt, silver and green-gold atmosphere, no text.",
+    "revealedPrompt": "Wide cinematic iconic scene of Hanumān flying through the sky carrying the radiant medicinal mountain peak toward Laṅkā, stars and dawn light around him, tiny distant battlefield lights below, immense scale, sacred adventure realism, no text.",
+    "sourceNote": "This node deliberately completes the entire first Yuddha 74 rescue, including the return and revival. It avoids conflating that event with Suṣeṇa’s later Yuddha 101 treatment of Lakṣmaṇa.\n"
+  },
+  {
+    "id": "HFH-03",
+    "title": "Suṣeṇa and the Second Rescue",
+    "story": "Later in the war, Lakṣmaṇa is struck down by Rāvaṇa’s spear. Rāma is overwhelmed with grief and calls Suṣeṇa, the monkey-physician. Suṣeṇa examines Lakṣmaṇa and identifies signs that he is still alive. He then instructs Hanumān to return to the medicinal mountain and bring the required herbs. Hanumān again reaches the mountain but cannot identify the medicines individually, so he carries the mountain peak back. Suṣeṇa himself selects and prepares the herb and administers it to Lakṣmaṇa, who rises restored and free of the spear and pain.",
+    "explore": "Physician’s Diagnosis: the player inspects Suṣeṇa’s observations that show Lakṣmaṇa is still alive, distinguishing diagnosis from despair.",
+    "interaction": "Role Matching: match Suṣeṇa = diagnosis/treatment, Hanumān = obtaining the medicine, Rāma = grieving brother/war leader, Lakṣmaṇa = patient. This prevents the app from giving every action to Hanumān.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "Who examines Lakṣmaṇa and gives Hanumān the medicinal instructions in Yuddha Kāṇḍa 101?",
+        "items": [
+          "A. Suṣeṇa",
+          "B. Jāmbavān",
+          "C. Sugrīva",
+          "D. Vibhīṣaṇa"
+        ],
+        "answer": "A. Suṣeṇa",
+        "feedback": "In this second rescue, Suṣeṇa is explicitly the monkey-physician and the one who directs the medical treatment."
+      },
+      {
+        "format": "Matching",
+        "prompt": "Match each character to the role supported by the source:",
+        "items": [
+          "Suṣeṇa → ?",
+          "Hanumān → ?",
+          "Lakṣmaṇa → ?"
+        ],
+        "answer": "Suṣeṇa → diagnoses and administers the medicine; Hanumān → retrieves the medicinal mountain; Lakṣmaṇa → receives treatment",
+        "feedback": "The rescue succeeds through different forms of service: knowledge, speed, strength, and treatment."
+      },
+      {
+        "format": "Compare episodes",
+        "prompt": "What is the key difference between the medicinal missions in Yuddha 74 and Yuddha 101?",
+        "items": [
+          "A. They are exactly the same scene repeated with no differences",
+          "B. In Yuddha 74 Jāmbavān sends Hanumān for the stricken army; in Yuddha 101 Suṣeṇa sends him after Lakṣmaṇa is wounded by Rāvaṇa",
+          "C. Suṣeṇa sends Hanumān in both scenes",
+          "D. Jāmbavān treats Lakṣmaṇa medically in Yuddha 101"
+        ],
+        "answer": "B. In Yuddha 74 Jāmbavān sends Hanumān for the stricken army; in Yuddha 101 Suṣeṇa sends him after Lakṣmaṇa is wounded by Rāvaṇa",
+        "feedback": "This distinction is important enough to become part of the game’s source-learning system."
+      }
+    ],
+    "unlocks": "Character: Suṣeṇa. Character Knowledge: Suṣeṇa — monkey-physician; Hanumān — repeated lifesaving service. Connection clue: Suṣeṇa → Lakṣmaṇa = Healer/Protector context; Suṣeṇa → Hanumān = Guidance/instruction context. Consider whether 'Healer' should be added as a relationship type or represented as Protector + role metadata.",
+    "takeaway": "Hanumān brings the possibility of healing; Suṣeṇa knows how to use it.",
+    "teaser": "Chapter VII Complete. Next chapter: Mission Fulfilled — the war moves toward Rāvaṇa’s fall, Sītā receives the news, and the journey turns toward Ayodhyā.",
+    "lockedPrompt": "Wide cinematic battlefield medical crisis, Lakṣmaṇa lying wounded while Rāma kneels nearby, Suṣeṇa approaching to examine him, Hanumān standing ready in the background, urgent but non-gory, muted indigo and ember-gold palette, no text.",
+    "revealedPrompt": "Wide cinematic physician-led rescue: Suṣeṇa preparing/administering the medicinal herb to Lakṣmaṇa as Hanumān stands beside the returned mountain peak in the background, Rāma watching with hope, devotional epic realism, no gore, no text.",
+    "sourceNote": "This node is a source-accuracy upgrade over the earlier 35-node draft. It keeps Chapter VII at three nodes but changes HFH-03 from a generic 'Mountain Returns' node into the distinct second medicinal rescue of Yuddha 101."
+  }
+]

@@ -1,0 +1,253 @@
+[
+  {
+    "id": "HFM-01",
+    "title": "Sugrīva Sends Hanumān",
+    "story": "Sugrīva sees two armed men approaching the mountain refuge and becomes afraid that Vāli may have sent them. He turns to Hanumān, asking him to discover who they are. Hanumān descends to meet the strangers in a form suited to peaceful inquiry. His first action in the campaign is therefore not combat but discernment: observe, approach, speak, and learn before acting.",
+    "explore": "Scene Discovery: the player examines the mountain-refuge scene and identifies three clues — Sugrīva watching from safety, the two unknown brothers below, and Hanumān preparing to approach rather than attack.",
+    "interaction": "Prediction Choice: “What is the wisest first move?” Choices: Attack first / Hide and wait / Approach and learn who they are. Reveal the canonical choice after selection; no choice changes canon or stars.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "Why does Sugrīva send Hanumān toward the two strangers?",
+        "items": [
+          "A. To challenge them to combat",
+          "B. To discover who they are and what they intend",
+          "C. To ask them for food",
+          "D. To guide them to Laṅkā"
+        ],
+        "answer": "B. To discover who they are and what they intend",
+        "feedback": "Hanumān begins as Sugrīva’s envoy. The scene establishes observation and intelligent inquiry before action."
+      },
+      {
+        "format": "Sequence",
+        "prompt": "Put the encounter in the correct order:",
+        "items": [
+          "1. Hanumān approaches the strangers",
+          "2. Sugrīva notices Rāma and Lakṣmaṇa",
+          "3. Sugrīva asks Hanumān to investigate"
+        ],
+        "answer": "2 → 3 → 1",
+        "feedback": "The order matters: concern leads to a mission, and the mission leads Hanumān into Rāma’s story."
+      },
+      {
+        "format": "Multi-select",
+        "prompt": "Which qualities does Hanumān demonstrate before he even knows the strangers’ identities?",
+        "items": [
+          "A. Discernment",
+          "B. Recklessness",
+          "C. Skilled communication",
+          "D. Service to Sugrīva"
+        ],
+        "answer": "A, C, and D",
+        "feedback": "The text presents Hanumān first as a capable envoy: observant, articulate, and responsive to Sugrīva’s need."
+      }
+    ],
+    "unlocks": "Character visibility: Rāma, Lakṣmaṇa, Sugrīva. Connection clues: Sugrīva → Hanumān = Service; Hanumān → Rāma/Lakṣmaṇa = Messenger context. Do not auto-complete the relationship network.",
+    "takeaway": "Before strength becomes action, Hanumān uses discernment.",
+    "teaser": "Next: Hanumān Meets Rāma — The envoy’s question becomes one of the defining meetings of his life.",
+    "lockedPrompt": "Square painterly sacred-adventure scene, forested Ṛṣyamūka mountain refuge, Sugrīva watching two distant armed noble strangers below, Hanumān preparing to descend, identities visually restrained, atmosphere of caution and intelligence, earthy green, deep teal and muted gold, mature devotional atlas style, no text.",
+    "revealedPrompt": "Square painterly Rāmāyaṇa scene, Hanumān respectfully approaching Rāma and Lakṣmaṇa near Ṛṣyamūka, Sugrīva visible high in the refuge behind, calm diplomatic body language rather than battle, warm gold light through forest green, premium sacred adventure art, no text.",
+    "sourceNote": "Optional enrichment only: later devotional retellings may emphasize Hanumān’s concealed recognition or brahmin disguise differently. Present such material as a labeled tradition layer, not as a replacement for the Vālmīki scene."
+  },
+  {
+    "id": "HFM-02",
+    "title": "Hanumān Meets Rāma",
+    "story": "Hanumān addresses Rāma and Lakṣmaṇa with careful, polished speech and asks who they are. Rāma listens closely and remarks to Lakṣmaṇa on the envoy’s command of language, learning, and manner of expression. Before Hanumān has performed any great feat for Rāma, the meeting establishes the qualities that will make service possible: intelligence, self-command, communication, and trust.",
+    "explore": "Dialogue Discovery: tap/select details in Hanumān’s speech posture and Rāma’s response to reveal three qualities: clarity, restraint, and learning.",
+    "interaction": "Dialogue Focus: present 3 short paraphrased speech choices and ask which best reflects Hanumān’s approach: threatening, flattering, or respectful inquiry. Reveal the textual pattern after choice.",
+    "mastery": [
+      {
+        "format": "Who said it?",
+        "prompt": "Who is especially impressed by Hanumān’s manner of speaking?",
+        "items": [
+          "A. Sugrīva",
+          "B. Rāma",
+          "C. Vāli",
+          "D. Aṅgada"
+        ],
+        "answer": "B. Rāma",
+        "feedback": "Rāma’s reaction makes this encounter more than an introduction: Hanumān’s speech itself reveals his training and character."
+      },
+      {
+        "format": "Matching",
+        "prompt": "Match Hanumān’s behavior to what it shows:",
+        "items": [
+          "Respectful inquiry → ?",
+          "Careful speech → ?",
+          "Approaching as an envoy → ?"
+        ],
+        "answer": "Respectful inquiry → Discernment; Careful speech → Learning/communication; Envoy role → Service",
+        "feedback": "The meeting defines Hanumān through how he acts, not through spectacle."
+      },
+      {
+        "format": "Source-aware reflection",
+        "prompt": "Which conclusion is safest from the Vālmīki layer itself?",
+        "items": [
+          "A. Rāma values Hanumān’s speech and learning",
+          "B. The text says Hanumān immediately opens his chest",
+          "C. Rāma gives Hanumān the ring during this first sentence",
+          "D. Hanumān fights Lakṣmaṇa"
+        ],
+        "answer": "A. Rāma values Hanumān’s speech and learning",
+        "feedback": "This keeps the core encounter anchored to Vālmīki while allowing later devotional recognition stories to appear separately."
+      }
+    ],
+    "unlocks": "Character Knowledge: Hanumān → Qualities: eloquence, learning, restraint. Connection clue: Hanumān → Rāma = Service/Devotion begins to become available, but player should build/confirm it in Connections.",
+    "takeaway": "Rāma first encounters Hanumān through the quality of his speech.",
+    "teaser": "Next: The Search for Sītā Revealed — Hanumān now learns why the brothers have come.",
+    "lockedPrompt": "Square painterly forest meeting, Hanumān in composed envoy form before two noble strangers, faces partly obscured by soft light, emphasis on speech and attention, sacred intimate atmosphere, brown, green and gold, no text.",
+    "revealedPrompt": "Square cinematic devotional scene, Hanumān speaking respectfully before Rāma and Lakṣmaṇa, Rāma listening with calm recognition and Lakṣmaṇa attentive beside him, expressive but restrained, warm saffron light, forest-green background, no text.",
+    "sourceNote": "Approved Hanumān commentary describes an immediate devotional recognition of Rāma and Hanumān’s joy. Use under “Explore deeper → Devotional lens,” clearly labeled as commentary/tradition. The uploaded commentary describes Sugrīva sending Hanumān and Hanumān’s joyful recognition of Rāma. "
+  },
+  {
+    "id": "HFM-03",
+    "title": "The Search for Sītā Revealed",
+    "story": "After the initial exchange, the reason for Rāma and Lakṣmaṇa’s presence becomes clear: they are searching for Sītā. Hanumān now understands that the strangers are not wandering warriors but men carrying a grave purpose. The campaign’s central mission enters Hanumān’s awareness before he has yet taken responsibility for it.",
+    "explore": "Mission Clue Discovery: reveal three pieces of context — Sītā is missing, Rāma is searching, and Sugrīva may be able to help.",
+    "interaction": "Missing Story Step: player arranges “meeting → reason for search → possibility of alliance” as the narrative bridge into the next encounter.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "What central problem does Hanumān learn about from Rāma and Lakṣmaṇa?",
+        "items": [
+          "A. Ayodhyā has no king",
+          "B. Sītā has been taken and they are searching for her",
+          "C. Sugrīva has disappeared",
+          "D. Laṅkā has already been defeated"
+        ],
+        "answer": "B. Sītā has been taken and they are searching for her",
+        "feedback": "The search for Sītā becomes the purpose that will eventually define Hanumān’s mission."
+      },
+      {
+        "format": "Cause and effect",
+        "prompt": "Why is this information important for Hanumān’s path?",
+        "items": [
+          "A. It gives him the purpose behind Rāma’s presence",
+          "B. It immediately ends Sugrīva’s exile",
+          "C. It means the ocean has already been crossed",
+          "D. It makes the war unnecessary"
+        ],
+        "answer": "A. It gives him the purpose behind Rāma’s presence",
+        "feedback": "Hanumān cannot serve a mission he does not understand. This encounter gives the first clear purpose."
+      },
+      {
+        "format": "Multi-select",
+        "prompt": "Which relationships are already shaping this scene even though Sītā is not physically present?",
+        "items": [
+          "A. Rāma ↔ Sītā",
+          "B. Hanumān → Sugrīva",
+          "C. Rāvaṇa → Sugrīva",
+          "D. Rāma ↔ Lakṣmaṇa"
+        ],
+        "answer": "A, B, and D",
+        "feedback": "The story is already a network of bonds: marriage, brotherhood, and service drive the search forward."
+      }
+    ],
+    "unlocks": "Knowledge: Sītā’s absence as the campaign’s central mission. Connection clues: Rāma ↔ Sītā = Marriage; Rāma ↔ Lakṣmaṇa = Family; Hanumān → Sugrīva = Service.",
+    "takeaway": "Hanumān’s future service begins with understanding another person’s need.",
+    "teaser": "Next: Hanumān Brings Rāma to Sugrīva — understanding becomes connection.",
+    "lockedPrompt": "Square forest scene with Hanumān listening to Rāma and Lakṣmaṇa, an empty space or subtle distant feminine motif suggesting someone absent, quiet serious atmosphere, no literal flashback needed, deep green and muted gold, no text.",
+    "revealedPrompt": "Square painterly dialogue scene, Rāma speaking of Sītā while Hanumān listens with focused compassion, Lakṣmaṇa beside Rāma, subtle symbolic glint of Sītā’s presence without showing her physically in the scene, devotional cinematic style, no text.",
+    "sourceNote": "Do not retell the full abduction here. Those events belong to the Main Story / Rāma / Sītā paths. Hanumān’s encounter should only contain what he learns at this moment."
+  },
+  {
+    "id": "HFM-04",
+    "title": "Hanumān Brings Rāma to Sugrīva",
+    "story": "Once Hanumān understands who Rāma and Lakṣmaṇa are and what they seek, he brings them into contact with Sugrīva. The result is not merely a new conversation: Hanumān has connected two parties whose needs can meet. Rāma seeks help finding Sītā; Sugrīva needs help in his conflict with Vāli. Friendship and alliance take shape.",
+    "explore": "Relationship Discovery: player selects the needs of Rāma and Sugrīva, then sees how Hanumān functions as the trusted intermediary between them.",
+    "interaction": "Build the Connection: select Rāma + Sugrīva + Alliance/Friendship. Correct choice animates the relationship line into the local encounter network.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "Whom does Hanumān bring together in this encounter?",
+        "items": [
+          "A. Rāma and Sugrīva",
+          "B. Rāma and Rāvaṇa",
+          "C. Lakṣmaṇa and Vāli",
+          "D. Sītā and Aṅgada"
+        ],
+        "answer": "A. Rāma and Sugrīva",
+        "feedback": "Hanumān’s service is relational: he creates the meeting through which the alliance becomes possible."
+      },
+      {
+        "format": "Matching",
+        "prompt": "Match each side to its immediate need:",
+        "items": [
+          "Rāma → ?",
+          "Sugrīva → ?"
+        ],
+        "answer": "Rāma → help in the search for Sītā; Sugrīva → help regarding Vāli and his lost position",
+        "feedback": "The alliance works because each side understands the other’s need."
+      },
+      {
+        "format": "Connection Builder",
+        "prompt": "Which relation best describes the bond that begins between Rāma and Sugrīva?",
+        "items": [
+          "A. Opposition",
+          "B. Alliance/Friendship",
+          "C. Marriage",
+          "D. Teacher"
+        ],
+        "answer": "B. Alliance/Friendship",
+        "feedback": "This is a major shared-world relationship and should become visible in Connections only after the player correctly builds it."
+      }
+    ],
+    "unlocks": "Connection opportunity: Rāma ↔ Sugrīva = Alliance/Friendship. Reinforces Hanumān as Messenger/Service. Future reuse: Follow Rāma and possible Follow Sugrīva.",
+    "takeaway": "Hanumān’s strength is not only what he can do; it is also whom he can connect.",
+    "teaser": "Next: The Signs of Sītā — the alliance receives a tangible sign of the mission ahead.",
+    "lockedPrompt": "Square mountain-refuge scene, Hanumān leading Rāma and Lakṣmaṇa upward toward a cautious Sugrīva, physical distance still separating the groups, warm dusk light, earthy green and gold, no text.",
+    "revealedPrompt": "Square painterly scene of Hanumān bringing Rāma and Lakṣmaṇa before Sugrīva, the new alliance forming in a mountain refuge, Hanumān subtly positioned as the bridge between both sides, mature sacred adventure style, no text.",
+    "sourceNote": "Keep the bond source-aware. Do not reduce it to a purely transactional bargain in player-facing copy; describe the documented mutual commitments and allow deeper interpretation to remain optional."
+  },
+  {
+    "id": "HFM-05",
+    "title": "The Signs of Sītā",
+    "story": "Sugrīva recalls seeing a woman being carried away and shows the ornaments that had fallen from her. Rāma confronts physical signs of Sītā’s passage, and the alliance now has more than a general story: it has evidence pointing toward the search. For Hanumān, this is another step from meeting Rāma to entering Rāma’s purpose.",
+    "explore": "Object Discovery: tap the bundle/ornaments and reveal what they represent — not treasure, but signs connected to Sītā and the abduction route.",
+    "interaction": "Object Meaning: player chooses what the ornaments function as in the story — decoration only / proof and memory / weapon / payment. Reveal their narrative role.",
+    "mastery": [
+      {
+        "format": "Object identification",
+        "prompt": "What does Sugrīva show Rāma?",
+        "items": [
+          "A. Rāma’s ring",
+          "B. Ornaments dropped by Sītā",
+          "C. Lakṣmaṇa’s bow",
+          "D. A crown from Laṅkā"
+        ],
+        "answer": "B. Ornaments dropped by Sītā",
+        "feedback": "The objects connect Sītā’s absence with a physical trace seen by Sugrīva and his companions."
+      },
+      {
+        "format": "Cause and effect",
+        "prompt": "Why are the ornaments important at this stage?",
+        "items": [
+          "A. They provide a tangible link to Sītā’s abduction",
+          "B. They prove Rāvaṇa has already died",
+          "C. They tell Hanumān the exact location of Laṅkā",
+          "D. They replace the need for the search"
+        ],
+        "answer": "A. They provide a tangible link to Sītā’s abduction",
+        "feedback": "They deepen certainty and emotional stakes, but they do not yet solve the search."
+      },
+      {
+        "format": "Compare objects",
+        "prompt": "How are these ornaments different in game function from Rāma’s ring later?",
+        "items": [
+          "A. Both are random treasure",
+          "B. The dropped ornaments are evidence from Sītā’s abduction; the ring becomes a deliberate message-token from Rāma",
+          "C. The ring belongs to Sugrīva",
+          "D. There is no difference"
+        ],
+        "answer": "B. The dropped ornaments are evidence from Sītā’s abduction; the ring becomes a deliberate message-token from Rāma",
+        "feedback": "This distinction prepares the player for the Sacred Object system without turning every story artifact into a collectible."
+      }
+    ],
+    "unlocks": "Story Artifact knowledge: Sītā’s dropped ornaments. Do NOT automatically add to Sacred Objects collection in V1. Connection clue: Sugrīva → Rāma = Alliance/help; reinforces Rāma ↔ Sītā = Marriage.",
+    "takeaway": "A small object can carry the weight of an absent person and an unfinished mission.",
+    "teaser": "Chapter I Complete. Next chapter: The Search — Hanumān leaves the meeting behind and enters the mission itself.",
+    "lockedPrompt": "Square painterly mountain refuge, a wrapped or partially hidden bundle before Rāma and Sugrīva, Hanumān nearby, emotional tension without revealing the contents, muted gold, green and earth palette, no text.",
+    "revealedPrompt": "Square intimate Rāmāyaṇa scene, Sugrīva showing Sītā’s dropped ornaments to Rāma while Hanumān and Lakṣmaṇa witness the moment, objects visible but not glamorized as treasure, sorrowful warm light, mature devotional style, no text.",
+    "sourceNote": "Treat the ornaments as story artifacts, not automatically as Sacred Collection items. This protects the special status of Rāma’s Ring and Sītā’s Cūḍāmaṇi."
+  }
+]

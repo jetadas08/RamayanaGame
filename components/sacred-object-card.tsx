@@ -1,11 +1,15 @@
+"use client";
 import Image from "next/image";
 import {ArrowRight,Check,Gem,LockKeyhole} from "lucide-react";
 import type {SacredObject} from "@/lib/types";
 import styles from "@/components/sacred-object-card.module.scss";
+import {useProgress} from "@/components/progress-provider";
 
 export type SacredObjectCardMode="mini"|"standard"|"detail";
 
 export function SacredObjectCard({object,discovered,mode="standard",lockedLabel,lockedDescription,showSources=false}:{object:SacredObject;discovered:boolean;mode?:SacredObjectCardMode;lockedLabel?:string;lockedDescription?:string;showSources?:boolean}){
+ const {progress}=useProgress();
+ if(object.id==="ramas-ring"&&progress.completedNodes.includes("HJ-11"))object={...object,transmissionChain:["Rāma","Hanumān","Sītā"],description:"The signet ring authenticates Hanumān as Rāma’s messenger and gives Sītā a recognizable sign of trust."};
  const image=mode==="detail"?(object.previewImage??object.thumbnailImage):mode==="mini"?object.iconImage:object.thumbnailImage;
  return <div className={styles.card} data-mode={mode} data-state={discovered?"discovered":"locked"} aria-label={discovered?`${object.name}, sacred object discovered`:"Undiscovered sacred object"}>
   <div className={styles.visual}><Image src={image} alt={discovered?object.altText:""} fill sizes={mode==="detail"?"(max-width: 760px) 100vw, 420px":mode==="mini"?"64px":"160px"}/><span>{discovered?<Check/>:<LockKeyhole/>}</span></div>

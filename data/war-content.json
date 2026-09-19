@@ -1,0 +1,304 @@
+[
+  {
+    "id": "HFW-01",
+    "title": "Hanumān Reports Laṅkā",
+    "story": "After Hanumān’s return, the mission changes from search to preparation for war. Rāma asks Hanumān to describe Laṅkā in detail: its defenses, gates, forces, approaches, and the difficulty of the ocean crossing. Hanumān’s knowledge now serves the whole army. What he saw alone becomes information that others can act upon.",
+    "explore": "Strategic Scene Discovery: inspect a stylized tactical view and reveal three categories Hanumān can report on — fortifications, forces, and access/crossing conditions.",
+    "interaction": "Information Triage: player chooses which details are useful for Rāma’s next decision. All canonical details remain fixed; the activity teaches the difference between observation and assumption.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "Why does Rāma ask Hanumān to speak about Laṅkā?",
+        "items": [
+          "A. Hanumān personally observed the city",
+          "B. Hanumān built the city",
+          "C. Hanumān rules Laṅkā",
+          "D. Hanumān has never been there"
+        ],
+        "answer": "A. Hanumān personally observed the city",
+        "feedback": "Hanumān’s authority in this scene comes from direct reconnaissance."
+      },
+      {
+        "format": "Matching",
+        "prompt": "Match the report category to its value:",
+        "items": [
+          "Fortifications → ?",
+          "Forces → ?",
+          "Ocean/access → ?"
+        ],
+        "answer": "Fortifications → how Laṅkā is defended; Forces → what resistance may be faced; Ocean/access → how the army must reach the island",
+        "feedback": "The reconnaissance matters because each observation supports a different military decision."
+      },
+      {
+        "format": "Multi-select",
+        "prompt": "Which qualities does this encounter add to Hanumān’s profile beyond physical strength?",
+        "items": [
+          "A. Observation",
+          "B. Memory",
+          "C. Strategic communication",
+          "D. Careless guessing"
+        ],
+        "answer": "A, B, and C",
+        "feedback": "Hanumān’s service now includes transforming what he saw into reliable guidance for others."
+      }
+    ],
+    "unlocks": "Character Knowledge: Hanumān — reconnaissance, memory, strategic communication. Connection clue: Hanumān → Rāma = Messenger + Service reinforced. No new Sacred Object.",
+    "takeaway": "What Hanumān sees alone becomes knowledge that can serve everyone.",
+    "teaser": "Next: Hanumān Speaks for Vibhīṣaṇa — strategy gives way to a harder question: whom can the army trust?",
+    "lockedPrompt": "Wide cinematic dusk war-camp scene near the southern ocean, Rāma and Sugrīva studying a dim, partially obscured view of distant Laṅkā, Hanumān present but report details still hidden, parchment-gold tactical atmosphere, mature sacred-adventure style, no text.",
+    "revealedPrompt": "Wide cinematic scene of Hanumān briefing Rāma, Lakṣmaṇa, Sugrīva and vānar leaders, with Laṅkā’s fortified gates and coastline represented in a luminous tactical visualization behind them, intelligent strategic mood, deep teal ocean and saffron-gold light, no text.",
+    "sourceNote": "Primary source directly states that Rāma asks Hanumān to describe Laṅkā as he saw it. Keep the encounter focused on reconnaissance, not invented military tactics."
+  },
+  {
+    "id": "HFW-02",
+    "title": "Hanumān Speaks for Vibhīṣaṇa",
+    "story": "Vibhīṣaṇa leaves Rāvaṇa and appears with four companions, asking to take refuge with Rāma. Sugrīva and several vānar leaders are suspicious. Rāma asks for counsel. Hanumān does not dismiss the danger, but argues from Vibhīṣaṇa’s speech, expression, timing, and recognition of Rāma’s merits and Rāvaṇa’s faults. Rāma then gives his own judgment and accepts the one who comes seeking refuge.",
+    "explore": "Council Scene Discovery: identify the visible signs the text itself lets Hanumān consider — speech, demeanor, timing, and stated reason for coming.",
+    "interaction": "Evidence vs Fear: sort statements into textual evidence / reasonable concern / unsupported assumption. The player is not asked to 'vote' on canon.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "What role does Hanumān play when Vibhīṣaṇa asks for refuge?",
+        "items": [
+          "A. He remains silent",
+          "B. He gives Rāma a reasoned opinion",
+          "C. He arrests Vibhīṣaṇa immediately",
+          "D. He leaves the camp"
+        ],
+        "answer": "B. He gives Rāma a reasoned opinion",
+        "feedback": "Hanumān acts here as counselor, not merely as warrior."
+      },
+      {
+        "format": "Multi-select",
+        "prompt": "What does Hanumān consider when judging Vibhīṣaṇa?",
+        "items": [
+          "A. His words and demeanor",
+          "B. The timing of his arrival",
+          "C. Rāma’s merits and Rāvaṇa’s conduct as Vibhīṣaṇa sees them",
+          "D. A secret prophecy invented by Hanumān"
+        ],
+        "answer": "A, B, and C",
+        "feedback": "The reasoning is observational and contextual; Hanumān does not claim certainty from supernatural knowledge."
+      },
+      {
+        "format": "Connection Builder",
+        "prompt": "Which relationship becomes available through this episode?",
+        "items": [
+          "A. Hanumān ↔ Vibhīṣaṇa = Alliance",
+          "B. Hanumān ↔ Vibhīṣaṇa = Marriage",
+          "C. Vibhīṣaṇa → Rāma = Opposition",
+          "D. Sugrīva → Vibhīṣaṇa = Teacher"
+        ],
+        "answer": "A. Hanumān ↔ Vibhīṣaṇa = Alliance",
+        "feedback": "This is a different source-layer moment from the earlier Rāmacaritamānasa HJ-09 meeting. The app should preserve both without pretending they are the same event."
+      }
+    ],
+    "unlocks": "Connection clue: Hanumān ↔ Vibhīṣaṇa = Alliance; Vibhīṣaṇa → Rāma = Alliance/Service. Character Knowledge: Hanumān — counsel/discernment.",
+    "takeaway": "Strength can defend a camp; discernment helps decide whom the camp can trust.",
+    "teaser": "Next: Crossing into Laṅkā — counsel is settled; the entire campaign must now cross the ocean.",
+    "lockedPrompt": "Wide cinematic shoreline council, Vibhīṣaṇa and four companions suspended or waiting at the edge of the camp, vānar leaders tense, Hanumān partly in shadow among the counselors, atmosphere of uncertainty and guarded trust, no text.",
+    "revealedPrompt": "Wide cinematic council scene, Hanumān speaking calmly before Rāma while Vibhīṣaṇa waits beyond, Sugrīva and other leaders listening with visible caution, ocean and campaign camp behind them, mature devotional realism, no text.",
+    "sourceNote": "Important source distinction: VR Yuddha 17–18 is the core Vālmīki refuge/counsel event. The earlier HJ-09 pre-Sītā Hanumān–Vibhīṣaṇa meeting remains an RCM-specific layer."
+  },
+  {
+    "id": "HFW-03",
+    "title": "Crossing into Laṅkā",
+    "story": "The war cannot begin until the army reaches Laṅkā. A bridge is established across the sea, and the vānar forces cross toward the island. Hanumān is part of the advancing campaign, but the text gives the bridge-making role to Nala. Hanumān moves from the mission of one messenger to the movement of an entire army.",
+    "explore": "Route Discovery: distinguish three layers on the map — Hanumān’s earlier leap route, the later Setu crossing, and Laṅkā as destination.",
+    "interaction": "Chronology Challenge: place “Hanumān’s leap → report to Rāma → bridge/campaign crossing” in order.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "Who is explicitly identified in the Vālmīki Yuddha Kāṇḍa as the maker/creator of the bridge?",
+        "items": [
+          "A. Hanumān",
+          "B. Nala",
+          "C. Jāmbavān",
+          "D. Aṅgada"
+        ],
+        "answer": "B. Nala",
+        "feedback": "This prevents the app from incorrectly transferring another character’s role to Hanumān."
+      },
+      {
+        "format": "True distinction",
+        "prompt": "Which statement is correct?",
+        "items": [
+          "A. Hanumān’s first leap to Laṅkā uses Rāma Setu",
+          "B. The Setu crossing happens later, with the army, in Yuddha Kāṇḍa"
+        ],
+        "answer": "B. The Setu crossing happens later, with the army, in Yuddha Kāṇḍa",
+        "feedback": "The two ocean crossings belong to different moments and must remain visually distinct on the campaign map."
+      },
+      {
+        "format": "Sequence",
+        "prompt": "Order the campaign transitions:",
+        "items": [
+          "1. Army crosses by the Setu",
+          "2. Hanumān returns from Laṅkā",
+          "3. Hanumān first leaps across the ocean"
+        ],
+        "answer": "3 → 2 → 1",
+        "feedback": "Keeping the chronology clear prevents the macro map from flattening different journeys into one route."
+      }
+    ],
+    "unlocks": "Place/Route Knowledge: Setu campaign route. Connection clue: Nala → Rāma’s army = Service. No Hanumān Sacred Object. Optional geography panel may show Rāmeśvaram/Adam’s Bridge as traditional/modern geographic context with clear qualification.",
+    "takeaway": "The same ocean that Hanumān crossed alone must now be crossed by an army.",
+    "teaser": "Next: Hanumān at the Western Gate — the campaign reaches Laṅkā and Hanumān takes a battlefield command position.",
+    "lockedPrompt": "Wide cinematic campaign-map painting, ocean and distant Laṅkā, bridge route still partly veiled by mist, immense vānar host waiting at the shore, Hanumān among commanders, no text.",
+    "revealedPrompt": "Wide cinematic aerial scene of the vānar army crossing the Setu toward Laṅkā, Nala’s bridge-making role visually acknowledged, Hanumān among the advancing commanders, strong distinction from his earlier solitary leap, sunrise gold over teal sea, no text.",
+    "sourceNote": "Do not present Rāmeśvaram as proof of the textual crossing. Use as traditional/modern geographic context only. Never route HJ-04 through the Setu."
+  },
+  {
+    "id": "HFW-04",
+    "title": "Hanumān at the Western Gate",
+    "story": "Rāvaṇa sends Dhumrākṣa with a force to attack Rāma, Lakṣmaṇa, and the vānar army. Dhumrākṣa exits through Laṅkā’s western gate — the sector where Hanumān is stationed as an army-chief. The encounter shifts Hanumān’s role again: scout, messenger, and counselor are now joined by responsibility for a battlefield sector.",
+    "explore": "Battlefield Orientation: identify the gate, Hanumān’s vānar position, and the incoming rākṣasa force.",
+    "interaction": "Threat Reading: select the most relevant change in the scene — a named enemy commander is advancing directly into Hanumān’s sector.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "At which gate is Hanumān stationed when Dhumrākṣa advances?",
+        "items": [
+          "A. Western gate",
+          "B. Northern gate",
+          "C. Eastern gate",
+          "D. No gate is named"
+        ],
+        "answer": "A. Western gate",
+        "feedback": "The source explicitly connects Dhumrākṣa’s advance with the western gate where Hanumān is stationed."
+      },
+      {
+        "format": "Cause and effect",
+        "prompt": "Why is this encounter different from Hanumān’s earlier Laṅkā encounters?",
+        "items": [
+          "A. He is now responsible within a larger army",
+          "B. He is secretly searching alone",
+          "C. He has not met Rāma yet",
+          "D. He is carrying the ring to Sītā"
+        ],
+        "answer": "A. He is now responsible within a larger army",
+        "feedback": "The context has changed from infiltration to open campaign leadership."
+      },
+      {
+        "format": "Connection Builder",
+        "prompt": "Which relation fits Dhumrākṣa and Hanumān in this battle context?",
+        "items": [
+          "A. Opposition",
+          "B. Marriage",
+          "C. Teacher",
+          "D. Family"
+        ],
+        "answer": "A. Opposition",
+        "feedback": "Connections should record the relationship only after the player builds it, not simply because both characters appear."
+      }
+    ],
+    "unlocks": "Character: Dhumrākṣa if not yet known. Connection clue/challenge: Dhumrākṣa → Hanumān = Opposition. Character Knowledge: Hanumān — battlefield command.",
+    "takeaway": "Hanumān’s service now includes holding ground for others.",
+    "teaser": "Next: Hanumān in Battle — command becomes direct protection when the vānar formation begins to break.",
+    "lockedPrompt": "Wide cinematic fortified western gate of Laṅkā, vānar defenders under gathering storm light, distant rākṣasa chariots emerging, Hanumān visible in command but enemy identity partially obscured, no text.",
+    "revealedPrompt": "Wide cinematic battle scene at Laṅkā’s western gate, Hanumān commanding vānar forces as Dhumrākṣa’s army advances from the gate, massive fortifications and dust-filled war atmosphere, mature epic composition, no text.",
+    "sourceNote": "Treat the western gate as a narrative location within Laṅkā. Avoid false archaeological precision."
+  },
+  {
+    "id": "HFW-05",
+    "title": "Hanumān in Battle",
+    "story": "Akampana’s attack drives the vānar forces into disorder. Hanumān comes to their aid. When the other vānaras see him, they rally around him and regain confidence. Akampana rains arrows upon Hanumān, but Hanumān continues forward, ultimately striking him down. The important story beat is not simply that Hanumān wins a duel: his presence restores the courage of those around him.",
+    "explore": "Battle Rally Discovery: identify the moment the vānar formation changes — scattered allies regroup around Hanumān.",
+    "interaction": "Battle Sequence: rally of vānaras → Akampana attacks → Hanumān advances → duel resolved.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "What happens when the vānar warriors see Hanumān come to their rescue?",
+        "items": [
+          "A. They abandon the field",
+          "B. They rally around him",
+          "C. They attack Hanumān",
+          "D. They leave for Ayodhyā"
+        ],
+        "answer": "B. They rally around him",
+        "feedback": "His battlefield importance is relational as well as physical: his presence restores confidence."
+      },
+      {
+        "format": "Sequence",
+        "prompt": "Put the Akampana encounter in order:",
+        "items": [
+          "1. Hanumān strikes down Akampana",
+          "2. Akampana’s attack disrupts the vānar forces",
+          "3. Hanumān comes to their rescue",
+          "4. The vānaras regroup around Hanumān"
+        ],
+        "answer": "2 → 3 → 4 → 1",
+        "feedback": "The encounter teaches the battle as a rescue-and-rally story, not just a finishing blow."
+      },
+      {
+        "format": "Multi-select",
+        "prompt": "What does the source support about Hanumān in this encounter?",
+        "items": [
+          "A. He absorbs heavy attack and continues",
+          "B. His allies gain courage around him",
+          "C. He defeats Akampana",
+          "D. He defeats Rāvaṇa here"
+        ],
+        "answer": "A, B, and C",
+        "feedback": "Rāvaṇa’s final defeat remains Rāma’s climactic action; this encounter should not distort that shared-world structure."
+      }
+    ],
+    "unlocks": "Character: Akampana. Connection challenge: Akampana → Hanumān = Opposition. Character Knowledge: Hanumān — rallying leadership, endurance, protection of allies.",
+    "takeaway": "In war, Hanumān’s strength is measured by what happens to others when he arrives.",
+    "teaser": "Next: Night of Crisis — the battlefield changes from combat to survival.",
+    "lockedPrompt": "Wide cinematic chaotic Laṅkā battlefield, vānar forces falling back under volleys of arrows, Hanumān approaching through dust and broken formations, enemy commander not yet fully revealed, no text.",
+    "revealedPrompt": "Wide cinematic duel-and-rally scene, Hanumān towering amid regrouped vānar warriors as Akampana attacks from a chariot, dynamic but readable composition, trees and broken weapons, epic war lighting, no text.",
+    "sourceNote": "Use Akampana as the principal bespoke battle for this encounter. Other Hanumān combat episodes can live as sourced internal sub-encounters; do not fabricate a composite chronology."
+  },
+  {
+    "id": "HFW-06",
+    "title": "Night of Crisis",
+    "story": "Indrajit’s Brahma weapon leaves Rāma, Lakṣmaṇa, and vast numbers of vānar warriors incapacitated. Hanumān and Vibhīṣaṇa remain conscious. Carrying torches, they move through the devastated battlefield searching for Jāmbavān. The chapter closes with a new kind of urgency: the question is no longer how to defeat the enemy, but whether the fallen can be saved.",
+    "explore": "Torchlight Scene Discovery: search the dark battlefield for Rāma, Lakṣmaṇa, surviving allies, and Jāmbavān. Keep interaction respectful and non-gory.",
+    "interaction": "Rescue Priority: identify why finding Jāmbavān matters. The next canonical instruction is revealed only after the player completes the scene.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "Who remains active and searches the battlefield for Jāmbavān?",
+        "items": [
+          "A. Hanumān and Vibhīṣaṇa",
+          "B. Rāma and Lakṣmaṇa",
+          "C. Rāvaṇa and Indrajit",
+          "D. Sītā and Trijaṭā"
+        ],
+        "answer": "A. Hanumān and Vibhīṣaṇa",
+        "feedback": "The source explicitly places Hanumān and Vibhīṣaṇa searching among the wounded."
+      },
+      {
+        "format": "Cause and effect",
+        "prompt": "Why does this encounter naturally lead into the Mountain of Herbs chapter?",
+        "items": [
+          "A. Jāmbavān will entrust Hanumān with the rescue mission",
+          "B. The war is already over",
+          "C. Hanumān returns to Kiṣkindhā permanently",
+          "D. Sītā asks for the bridge to be rebuilt"
+        ],
+        "answer": "A. Jāmbavān will entrust Hanumān with the rescue mission",
+        "feedback": "The search for Jāmbavān is the hinge between battlefield crisis and Hanumān’s lifesaving mission."
+      },
+      {
+        "format": "Multi-select",
+        "prompt": "Which roles of Hanumān are active here?",
+        "items": [
+          "A. Survivor",
+          "B. Searcher",
+          "C. Ally working with Vibhīṣaṇa",
+          "D. King of Laṅkā"
+        ],
+        "answer": "A, B, and C",
+        "feedback": "The encounter deliberately shifts away from victory imagery and shows service under conditions of uncertainty and loss."
+      }
+    ],
+    "unlocks": "Connection clue: Hanumān ↔ Vibhīṣaṇa = Alliance reinforced; Jāmbavān → Hanumān = Guidance challenge becomes available for Chapter VII. Chapter VII unlock trigger after completion.",
+    "takeaway": "When strength cannot prevent a crisis, service asks what can still be done.",
+    "teaser": "Chapter VI Complete. Next chapter: The Mountain of Herbs — Jāmbavān calls for the one who can still act.",
+    "lockedPrompt": "Wide cinematic night battlefield under deep indigo sky, scattered torches moving among fallen vānar warriors, Hanumān and Vibhīṣaṇa searching in silhouette, Jāmbavān not yet visible, solemn sacred atmosphere, no gore, no text.",
+    "revealedPrompt": "Wide cinematic torch-lit night scene, Hanumān and Vibhīṣaṇa finding the wounded Jāmbavān amid the devastated battlefield, Rāma and Lakṣmaṇa visible in the distance as part of the crisis context, indigo, ember gold and muted earth palette, no gore, no text.",
+    "sourceNote": "This source gives the crisis that leads directly to the four-herb mission. Do not import the later popular single-Sañjīvanī/Lakṣmaṇa-only framing into this encounter."
+  }
+]

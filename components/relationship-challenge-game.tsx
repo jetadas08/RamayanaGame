@@ -12,7 +12,7 @@ import styles from "@/app/connections/connections.module.scss";
 export function RelationshipChallengeGame(){
  const {progress,answerConnection}=useProgress();
  const [from,setFrom]=useState(""),[to,setTo]=useState(""),[selectedType,setSelectedType]=useState(""),[feedback,setFeedback]=useState<"idle"|"right"|"wrong">("idle"),[confirmedId,setConfirmedId]=useState("");
- const availableSet=useMemo(()=>new Set(availableRelationshipIds(progress.completedNodes.length)),[progress.completedNodes.length]);
+ const availableSet=useMemo(()=>new Set(availableRelationshipIds(progress.completedNodes.length,progress.meetingCompletedNodes.length,progress.warCompletedNodes.length,progress.herbsCompletedNodes.length,progress.finaleCompletedNodes.length)),[progress.completedNodes.length,progress.meetingCompletedNodes.length,progress.warCompletedNodes.length,progress.herbsCompletedNodes.length,progress.finaleCompletedNodes.length]);
  const discoveredSet=useMemo(()=>new Set(progress.unlockedRelationships),[progress.unlockedRelationships]);
  const candidates=useMemo(()=>relationships.filter(edge=>availableSet.has(edge.id)&&progress.unlockedCharacters.includes(characterName(edge.fromCharacterId))&&progress.unlockedCharacters.includes(characterName(edge.toCharacterId))),[availableSet,progress.unlockedCharacters]);
  const undiscovered=candidates.filter(edge=>!discoveredSet.has(edge.id));

@@ -8,6 +8,8 @@ const choices = (...labels: string[]) =>
 
 export const initialProgress: JourneyProgressState = {
   schemaVersion: 2,
+  campaignComplete:false,finaleCompletedNodes:[],herbsCompletedNodes: [],warCompletedNodes: [],meetingCompletedNodes: [],searchCompletedNodes:[],
+  legacySearchAccess: false,
   globalKnowledge: {characterIds:["hanuman","rama"],relationshipIds:[],placeIds:[],sacredObjectIds:[],discoveryIds:[],sourceIds:[]},
   characterJourneys: {hanuman:{campaignId:"hanuman",completedEventIds:[],answeredActivityIds:[],masteryStars:0,completedChapterIds:[]}},
   currentNode: "HJ-01",
@@ -18,10 +20,13 @@ export const initialProgress: JourneyProgressState = {
   relationshipChallengeAnswers: {},
   characterChallengeAnswers: {},
   sceneDiscoveries: [],
+  revealedScenes: [],
   hiddenDiscoveries: [],
   discoveredObjects: [],
   predictionChoices: {},
   storyMemoryAnswers: {},
+  searchBoardAnswers: {},
+  crossingTrailAnswers: {},
   nodeAttempts: {},
   achievements: [],
   difficulty: "explorer",
@@ -143,3 +148,5 @@ export const confidenceCopy = {
   D: "Debated location",
   E: "Narrative / unknown",
 } as const;
+
+export {meetingNodes} from "@/data/meeting";

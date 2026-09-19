@@ -1,3 +1,7 @@
+import {finaleMemories,finaleMemoryNames,finaleNodes} from "@/data/finale";
+import {meetingMemories,meetingMemoryNames} from "@/data/meeting";
+import {herbsNodes} from "@/data/herbs";
+import {warNodes} from "@/data/war";
 import type {CharacterChallenge,CharacterChallengeType,CharacterKnowledgeProgress,CharacterKnowledgeProfileDefinition,CharacterKnowledgeScope,CharacterKnowledgeUnlockMethod,CharacterProfileDepth,CharacterProfileField,CharacterProfileSection,JourneyProgressState,SourceId,SourceReference} from "@/lib/types";
 import {characterNameById} from "@/data/character-ids";
 import {journeyNodes} from "@/data/journey";
@@ -114,7 +118,7 @@ function buildMajorProfile(characterId:string):CharacterProfileField[]{
 }
 const majorProfileFields=Object.keys(majorProfileConfig).flatMap(buildMajorProfile);
 const enrichedMajorIds=new Set([...Object.keys(majorProfileConfig),"ravana"]);
-const depthByCharacter:Record<string,CharacterProfileDepth>={hanuman:"major",rama:"major",sita:"major",ravana:"major",lakshmana:"major",jambavan:"supporting",vibhishana:"supporting",sugriva:"supporting",indrajit:"supporting",trijata:"supporting",sampati:"supporting",mainaka:"encounter",surasa:"encounter",simhika:"encounter",lankini:"encounter","aksha-kumara":"encounter"};
+const depthByCharacter:Record<string,CharacterProfileDepth>={bharata:"supporting",shatrughna:"encounter",sushena:"supporting",hanuman:"major",rama:"major",sita:"major",ravana:"major",lakshmana:"major",jambavan:"supporting",vibhishana:"supporting",sugriva:"supporting",indrajit:"supporting",trijata:"supporting",sampati:"supporting",mainaka:"encounter",surasa:"encounter",simhika:"encounter",lankini:"encounter","aksha-kumara":"encounter"};
 const futureScopeByCharacter:Partial<Record<string,CharacterKnowledgeScope>>={rama:"rama-path-v1",sita:"sita-path-v1",ravana:"ravana-path-v1"};
 const unlockMethod=(unlock:CharacterProfileField["unlock"]):CharacterKnowledgeUnlockMethod=>{
  switch(unlock.kind){
@@ -130,12 +134,12 @@ const unlockMethod=(unlock:CharacterProfileField["unlock"]):CharacterKnowledgeUn
 };
 const scoped=(field:CharacterProfileField):CharacterProfileField=>{
  const future=futureScopeByCharacter[field.characterId];
- return {...field,scopes:future?["hanuman-v1",future]:["hanuman-v1"],unlockMethod:unlockMethod(field.unlock),countsTowardCompletion:field.unlock.kind!=="pendingReview",claimType:field.sources[0]?.claimType??"textualFact"};
+ return {...field,scopes:future?["hanuman-v1",future]:["hanuman-v1"],unlockMethod:unlockMethod(field.unlock),countsTowardCompletion:field.countsTowardCompletion??field.unlock.kind!=="pendingReview",claimType:field.sources[0]?.claimType??"textualFact"};
 };
 const coreFields=[...genericProfileFields.filter(field=>!enrichedMajorIds.has(field.characterId)),...majorProfileFields,...ravanaFields];
 const profiledIds=new Set(coreFields.map(field=>field.characterId));
 const conciseEncounterFields:CharacterProfileField[]=characters.filter(character=>!profiledIds.has(character.id)).flatMap(character=>{
- const node=journeyNodes.find(item=>item.id===character.appearances[0])!;
+ const node=[...journeyNodes,...warNodes,...herbsNodes,...finaleNodes].find(item=>item.id===character.appearances[0])!;
  const ids=character.sources.filter((id):id is SourceId=>validSourceIds.has(id as SourceId));
  return [
   {id:`${character.id}-identity`,characterId:character.id,section:"overview",label:"Identity",value:character.role,sources:sourceRefs(ids,`V1 role for ${character.name}`),sourceStatus:"Textual",unlock:{kind:"discovery"}},
@@ -143,7 +147,39 @@ const conciseEncounterFields:CharacterProfileField[]=characters.filter(character
   {id:`${character.id}-source`,characterId:character.id,section:"sources",label:"Source record",value:ids.join(" · "),sources:sourceRefs(ids,`Approved V1 source layer for ${character.name}`),sourceStatus:"Textual",unlock:{kind:"journey",nodeId:node.id}},
  ] as CharacterProfileField[];
 });
-export const characterProfileFields:CharacterProfileField[]=[...coreFields,...conciseEncounterFields].map(scoped);
+
+const herbsKnowledge:CharacterProfileField[]=[
+ ['jambavan','HFH-01','Guidance in crisis','Jāmbavān asks whether Hanumān lives, then entrusts him with the first medicinal mission.','6.74'],
+ ['hanuman','HFH-01','Four medicinal herbs','Mṛta Sañjīvanī restores life; Viśalyakaraṇī removes weapons/heals weapon wounds; Suvarṇakaraṇī restores complexion; Sandhānī joins fractures/severed parts.','6.74'],
+ ['hanuman','HFH-02','Service under uncertainty','Unable to obtain the four herbs individually, Hanumān carries the peak, restores the army, and returns the mountain north.','6.74'],
+ ['hanuman','HFH-03','Two distinct rescues','Jāmbavān directs the first mission for the army; Suṣeṇa directs the later mission after Rāvaṇa wounds Lakṣmaṇa.','6.74 and 6.101'],
+ ['sushena','HFH-03','Name','Suṣeṇa — सुषेण.','6.101'],
+ ['sushena','HFH-03','War context','The monkey-physician serves during the war at Laṅkā.','6.101'],
+ ['sushena','HFH-03','Examination','Suṣeṇa examines Lakṣmaṇa after Rāvaṇa strikes him.','6.101'],
+ ['sushena','HFH-03','Signs of life','Suṣeṇa recognizes that Lakṣmaṇa is still alive.','6.101'],
+ ['sushena','HFH-03','Medicinal instructions','He directs Hanumān to retrieve the needed medicines from the mountain.','6.101'],
+ ['sushena','HFH-03','Preparation','He selects and prepares the needed herb when Hanumān returns.','6.101'],
+ ['sushena','HFH-03','Treatment','He administers the medicine to Lakṣmaṇa, who is restored.','6.101']
+].map(([characterId,nodeId,label,value,range],i)=>({id:`herbs-knowledge-${i}`,characterId,section:characterId==='sushena'?'events':'journey',label,value,sources:[{source:'VR-GP',claimType:'textualFact',summary:`Vālmīki Rāmāyaṇa, Yuddha Kāṇḍa ${range}`,locator:`Yuddha ${range}; exact verses pending edition review`,verification:'pendingEditionAudit'}],sourceStatus:'Textual',unlock:{kind:'journey',nodeId}}));
+
+export const characterProfileFields:CharacterProfileField[]=[...coreFields,...meetingMemories.map((value,i):CharacterProfileField=>({id:`hanuman-meeting-memory-${i+1}`,characterId:"hanuman",section:"journey",label:meetingMemoryNames[i],value,countsTowardCompletion:false,sources:[source("VR-GP","A reflective memory drawn from the completed Chapter I encounter.","learningInterpretation")],sourceStatus:"Textual",unlock:{kind:"achievement",achievement:meetingMemoryNames[i]}})),...finaleMemories.map((value,i):CharacterProfileField=>({id:`hanuman-finale-memory-${i+1}`,characterId:"hanuman",section:"journey",label:finaleMemoryNames[i],value,countsTowardCompletion:false,sources:[source("VR-GP","A reflective memory drawn from the completed Chapter VIII encounter.","learningInterpretation")],sourceStatus:"Textual",unlock:{kind:"achievement",achievement:finaleMemoryNames[i]}})),...conciseEncounterFields,...herbsKnowledge,...[
+ ["rama","HFF-01","The final confrontation","Rāma defeats and kills Rāvaṇa; the decisive act belongs to him.","6.108"],
+ ["hanuman","HFF-01","Service without owning the culmination","Hanumān serves within the allied campaign; Rāma performs the final act.","6.108"],
+ ["sita","HFF-02","Compassion after victory","Sītā refuses retaliation against the rākṣasī attendants.","6.112–113"],
+ ["hanuman","HFF-02","The grove revisited","Rāma sends Hanumān to bring Sītā news of victory; her response returns through him.","6.112–113"],
+ ["bharata","HFF-03","Waiting and devotion","Bharata receives Hanumān’s message of Rāma’s safe return at Nandigrāma.","6.125–127"],
+ ["hanuman","HFF-03","The messenger arc","Once Sugrīva’s envoy to Rāma, Hanumān now speaks for Rāma to Bharata.","6.125–127"],
+ ["bharata","HFF-04","The kingdom restored","Bharata restores the kingdom to Rāma at the end of the exile.","6.127–128"],
+ ["hanuman","HFF-04","Coronation gift","Sītā gives Hanumān a pearl necklace. This is a coronation story artifact, distinct from the earlier cūḍāmaṇi transmission.","6.127–128"],
+ ["shatrughna","HFF-04","Homecoming","Śatrughna is present with the brothers in the homecoming and coronation context.","6.127–128"],
+ ["hanuman","HFW-01","Reconnaissance, memory and strategic communication","What Hanumān personally observed becomes a reliable report for Rāma and the army.","6.3"],
+ ["hanuman","HFW-02","Counsel and discernment","Hanumān gives a reasoned assessment of Vibhīṣaṇa. Rāma makes the decision to grant refuge.","6.17–18"],
+ ["vibhishana","HFW-02","Seeking refuge","The Vālmīki refuge-and-counsel episode is distinct from the earlier Rāmacaritamānasa meeting in HJ-09.","6.17–18"],
+ ["nala","HFW-03","Bridge-making service","Nala is identified as the bridge-maker. The army’s Setu crossing occurs later than Hanumān’s solitary leap.","6.22–26"],
+ ["hanuman","HFW-04","Battlefield command","Hanumān is stationed as an army-chief at Laṅkā’s western gate.","6.51–52"],
+ ["hanuman","HFW-05","Leadership and protection","The vānaras rally around Hanumān when he comes to their aid against Akampana.","6.55–56"],
+ ["hanuman","HFW-06","Service in crisis","Hanumān and Vibhīṣaṇa search the wounded battlefield for Jāmbavān.","6.74"]
+].map(([characterId,nodeId,label,value,range]):CharacterProfileField=>({id:`${characterId}-${nodeId}-knowledge`,characterId,section:"journey",label,value,sources:[{source:"VR-GP",claimType:"textualFact",summary:`Vālmīki Rāmāyaṇa, Yuddha Kāṇḍa ${range}`,verification:"pendingEditionAudit"}],sourceStatus:"Textual",unlock:{kind:"journey",nodeId}})),...["Eloquence","Learning","Restraint"].map((quality,index):CharacterProfileField=>({id:`hanuman-meeting-quality-${index}`,characterId:"hanuman",section:"overview",label:"Quality at the first meeting",value:quality,sources:[source("VR-GP","Kiṣkindhā Kāṇḍa 4.3–4; exact verses pending edition review")],sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HFM-02"}})),{id:"sita-meeting-mission",characterId:"sita",section:"journey",label:"The reason for the search",value:"Sītā’s absence gives the meeting its larger purpose: Rāma seeks her, and Hanumān sees how Sugrīva may help.",sources:[source("VR-GP","Kiṣkindhā Kāṇḍa 4.3–4; exact verses pending edition review")],sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HFM-03"}} satisfies CharacterProfileField,{id:"sita-dropped-ornaments",characterId:"sita",section:"events",label:"Story evidence",value:"Ornaments dropped by Sītā are shown to Rāma by Sugrīva. They are story artifacts, not Sacred Objects.",sources:[source("VR-GP","Kiṣkindhā Kāṇḍa 4.6; exact verses pending edition review")],sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HFM-05"}} satisfies CharacterProfileField].map(scoped);
 
 export const characterKnowledgeProfiles:CharacterKnowledgeProfileDefinition[]=characters.map(character=>{
  const future=futureScopeByCharacter[character.id];
@@ -195,7 +231,7 @@ export function characterFieldIsUnlocked(field:CharacterProfileField,progress:Jo
  if(!progress.unlockedCharacters.includes(characterNameById[field.characterId]??""))return false;
  switch(field.unlock.kind){
   case "discovery":return true;
-  case "journey":return progress.completedNodes.includes(field.unlock.nodeId);
+  case "journey":return [...progress.meetingCompletedNodes,...progress.completedNodes,...progress.warCompletedNodes,...progress.finaleCompletedNodes,...progress.herbsCompletedNodes].includes(field.unlock.nodeId);
   case "relationship":return progress.unlockedRelationships.includes(field.unlock.relationshipId);
   case "challenge":return characterAnswerIsCorrect(progress,field.unlock.challengeId);
   case "object":return progress.discoveredObjects.includes(field.unlock.objectId);

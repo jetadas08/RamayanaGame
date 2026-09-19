@@ -1,7 +1,9 @@
 "use client";
+import {chapterStatus} from "@/lib/campaign-status";
+
 
 import {useState} from "react";
-import {Award,BookOpen,Check,Compass,Eye,Gem,Link2,LockKeyhole,Map as MapIcon,RotateCcw,Sparkles,Star,Users} from "lucide-react";
+import {Award,Check,Compass,Eye,Gem,Link2,LockKeyhole,Map as MapIcon,RotateCcw,Sparkles,Star,Users} from "lucide-react";
 import {PageHero,ProgressSummary,SectionPanel} from "@/components/atlas-page-ui";
 import {areas} from "@/data/discoveries";
 import {useProgress} from "@/components/progress-provider";
@@ -15,7 +17,7 @@ const statIcons={Encounters:Compass,"Mastery stars":Star,Characters:Users,Connec
 const kandaLabels={kiskindha:"Kiṣkindhā",sundara:"Sundara",yuddha:"Yuddha"};
 
 export default function ProgressPage(){
- const {progress,error,user,resetProgress}=useProgress();
+ const {progress,error,user,resetProgress,hydrated}=useProgress();
  const [confirmReset,setConfirmReset]=useState(false);
  const counts=progressCounts(progress),completedCount=counts.encounters;
  const stats=[
@@ -27,24 +29,25 @@ export default function ProgressPage(){
   {value:counts.sacredObjects,total:progressTotals.sacredObjects,label:"Sacred objects",group:"world"},
   {value:counts.achievements,total:progressTotals.achievements,label:"Achievements",group:"recognition"},
  ];
+ if(!hydrated)return <main className="atlas-companion-page" aria-busy="true"><div className={`atlas-companion-shell ${styles.recordShell}`}><PageHero eyebrow="Progress · Journey record" title="Restoring your living record" description="Loading saved encounter, mastery, and discovery progress."/></div></main>;
  return <main className="atlas-companion-page"><div className={`atlas-companion-shell ${styles.recordShell}`}>
   <PageHero eyebrow="Progress · Journey record" title="Your living record" description="Follow Hanumān campaign progress separately from the characters, relationships, places, and objects you learn across the shared Ramayana world." summary={<ProgressSummary value={completedCount} total={progressTotals.encounters} label="Playable encounters" icon={<Compass/>}/>}/>
   <div className={styles.statGrid}>{stats.map(({value,total,label,group})=>{const Icon=statIcons[label as keyof typeof statIcons];return <article className={styles.metric} data-group={group} key={label}><span><Icon/></span><div><strong>{Math.min(value,total)}<em> / {total}</em></strong><small>{label}</small></div></article>;})}</div>
   <div className={styles.recordStatus}><p role="status">{error||(user?"Progress linked to your account.":"Guest journey · Saved on this browser.")}</p>{confirmReset?<div className={styles.resetConfirm}><button onClick={()=>{resetProgress();setConfirmReset(false);}}><RotateCcw/>Confirm reset</button><button onClick={()=>setConfirmReset(false)}>Cancel</button><span>This clears journey stars, discoveries, connection answers, and achievements.</span></div>:<button className={styles.resetTrigger} onClick={()=>setConfirmReset(true)}><RotateCcw/>Reset journey progress</button>}</div>
-  <SectionPanel eyebrow="Character campaign" title="Follow Hanumān · 8 chapters" className={styles.campaignPanel}>
-   <p className={styles.campaignNote}>Your existing fifteen encounters form the playable Mission to Laṅkā. Planned chapters do not count against current completion.</p>
-   <div className={styles.campaignChapterGrid}>{hanumanCampaignChapters.map(chapter=>{const done=progress.characterJourneys.hanuman?.completedChapterIds.includes(chapter.id);const active=chapter.playableNodeIds.some(id=>!progress.completedNodes.includes(id))&&chapter.playableNodeIds.some(id=>progress.completedNodes.includes(id)||id===progress.currentNode);return <article key={chapter.id} data-state={done?"complete":chapter.status==="planned"?"planned":active?"current":"available"}><span>{done?<Check/>:chapter.status==="planned"?<BookOpen/>:<Compass/>}</span><div><small>Chapter {chapter.number} · {kandaLabels[chapter.kanda]} Kāṇḍa</small><strong>{chapter.title}</strong><em>{done?"Complete":chapter.status==="planned"?"Source review required":`${chapter.playableNodeIds.filter(id=>progress.completedNodes.includes(id)).length}/${chapter.playableNodeIds.length} playable complete`}</em></div></article>;})}</div>
+  <SectionPanel eyebrow="Character campaign" title={`Follow Hanumān · ${hanumanCampaignChapters.length} chapters`} className={styles.campaignPanel}>
+   <p className={styles.campaignNote}>The current campaign offers {progressTotals.encounters} playable encounters and {progressTotals.masteryStars} mastery stars. Completion and mastery are tracked separately.</p>
+   <div className={styles.campaignChapterGrid}>{hanumanCampaignChapters.map(chapter=>{const status=chapterStatus(chapter,progress);return <article key={chapter.id} data-state={status.toLowerCase().replace(" ","-")}><span>{status==="Complete"||status==="Mastered"?<Check/>:status==="Locked"?<LockKeyhole/>:<Compass/>}</span><div><small>Chapter {chapter.number} · {kandaLabels[chapter.kanda]} Kāṇḍa</small><strong>{chapter.title}</strong><em>{status}</em></div></article>;})}</div>
   </SectionPanel>
   <div className={styles.recordColumns}>
    <SectionPanel eyebrow="Recognition" title="Discoveries & achievements" className={styles.achievementPanel}>
-    <div className={styles.achievementList}>{achievementDefinitions.map(item=>{const unlocked=progress.achievements.includes(item.name);return <article className={unlocked?styles.unlockedAchievement:styles.lockedAchievement} key={item.name}><span>{unlocked?<Sparkles/>:<LockKeyhole/>}</span><div><strong>{item.name}</strong><small>{item.description}</small></div><em>{item.category}</em></article>;})}</div>
+    <div className={styles.achievementList}>{achievementDefinitions.map(item=>{const unlocked=progress.achievements.includes(item.name);return <article className={unlocked?styles.unlockedAchievement:styles.lockedAchievement} key={item.name}><span>{unlocked?<Sparkles/>:<LockKeyhole/>}</span><div><strong>{unlocked?item.name:"Deeper insight undiscovered"}</strong><small>{unlocked?item.description:"Master the related encounter to reveal this insight."}</small></div><em>{unlocked?item.category:"Locked"}</em></article>;})}</div>
    </SectionPanel>
    <div>
     <SectionPanel eyebrow="Collection" title={`Sacred Objects — ${Math.min(progress.discoveredObjects.length,sacredObjects.length)}/${sacredObjects.length}`} className={styles.objectPanel}>
-     <div className={styles.objectGrid}>{sacredObjects.map(object=><SacredObjectCard key={object.id} object={object} discovered={progress.discoveredObjects.includes(object.id)} mode="standard"/>)}</div>
+     <div className={styles.objectGrid} id="sacred-objects">{sacredObjects.map(object=><SacredObjectCard key={object.id} object={object} discovered={progress.discoveredObjects.includes(object.id)} mode="standard"/>)}</div>
     </SectionPanel>
     <SectionPanel eyebrow="Atlas progress" title="Map regions" className={styles.regionPanel}>
-     <div className={styles.regionGrid}>{areas.map(area=>{const complete=completedCount>=area.through,discovered=completedCount+1>=area.from,state=complete?"complete":discovered?"discovered":"locked";return <article data-state={state} key={area.id}><span>{complete?<Check/>:discovered?<MapIcon/>:<LockKeyhole/>}</span><div><strong>{area.name}</strong><small>{complete?"Completed":discovered?"Discovered":"Still veiled"}</small></div></article>;})}</div>
+     <div className={styles.regionGrid}>{areas.map(area=>{const complete=progress.completedNodes.length>=area.through,discovered=progress.completedNodes.length+1>=area.from,state=complete?"complete":discovered?"discovered":"locked";return <article data-state={state} key={area.id}><span>{complete?<Check/>:discovered?<MapIcon/>:<LockKeyhole/>}</span><div><strong>{area.name}</strong><small>{complete?"Completed":discovered?"Discovered":"Still veiled"}</small></div></article>;})}</div>
     </SectionPanel>
    </div>
   </div>

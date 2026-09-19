@@ -1,3 +1,7 @@
+import {finaleNodes} from "@/data/finale";
+import {herbsNodes} from "@/data/herbs";
+import {warNodes} from "@/data/war";
+import {meetingNodes} from "@/data/meeting";
 import { initialProgress, journeyNodes } from "@/data/journey";
 import type { CharacterPortraitData, CharacterProfile } from "@/lib/types";
 import {characterIdByName} from "@/data/character-ids";
@@ -22,6 +26,10 @@ export const achievements = [
  {name:"Perfect Journey", node:15, totalStars:45},
 ];
 const roles: Record<string,string> = {
+ "Bharata":"Rāma’s brother, who awaits his return at Nandigrāma and restores the kingdom to him.",
+ "Śatrughna":"Rāma’s brother, present in the homecoming and coronation.",
+ "Suṣeṇa":"The monkey-physician who diagnoses Lakṣmaṇa and directs the second medicinal rescue.",
+ "Nala":"The bridge-maker identified in the Vālmīki Yuddha Kāṇḍa campaign.","Dhumrākṣa":"The commander advancing through Laṅkā’s western gate into Hanumān’s sector.","Akampana":"The warrior whose assault disrupts the vānar forces before Hanumān rallies them.","Kumuda":"A vānar warrior present in the Akampana battle episode.","Mainda":"A vānar leader in the council and campaign.",
  "Hanumān":"Rāma’s messenger; courage, discernment and devotion unite in his mission.",
  "Rāma":"Sītā’s husband, whose search gives the journey its purpose.",
  "Sītā":"The heart of the search, steadfast amid captivity in Laṅkā.",
@@ -41,14 +49,15 @@ const roles: Record<string,string> = {
  "Lakṣmaṇa":"Rāma’s brother, present when the mission’s news returns.",
  "Sugrīva":"The Vanara king allied with Rāma.",
 };
-const sanskrit:Record<string,string>={
+const sanskrit:Record<string,string>={"Bharata":"भरत","Śatrughna":"शत्रुघ्न","Suṣeṇa":"सुषेण",
+ "Nala":"नल","Dhumrākṣa":"धूम्राक्ष","Akampana":"अकम्पन","Kumuda":"कुमुद","Mainda":"मैन्द",
  "Hanumān":"हनुमान्","Rāma":"राम","Aṅgada":"अङ्गद","Jāmbavān":"जाम्बवान्","Vanara search party":"वानर अन्वेषण दल",
  "Sampāti":"सम्पाति","Maināka":"मैनाक","Surasā":"सुरसा","Siṃhikā":"सिंहिका","Laṅkinī":"लङ्किनी","Vibhīṣaṇa":"विभीषण",
  "Sītā":"सीता","Trijaṭā":"त्रिजटा","Rākṣasī guards":"राक्षसी रक्षिकाः","Kiṅkaras":"किङ्कराः","Jambumālī":"जम्बुमाली",
  "Seven Sons of the Ministers":"मन्त्रिपुत्राः सप्त","Virūpākṣa":"विरूपाक्ष","Yūpākṣa":"यूपाक्ष","Durdhara":"दुर्धर","Praghasa":"प्रघस",
  "Bhāsakarṇa":"भासकर्ण","Akṣa Kumāra":"अक्षकुमार","Indrajit":"इन्द्रजित्","Rāvaṇa":"रावण","Lakṣmaṇa":"लक्ष्मण","Sugrīva":"सुग्रीव",
 };
-const groups:Record<string,string>={
+const groups:Record<string,string>={"Suṣeṇa":"Vānar allies · Yuddha Kāṇḍa",
  "Hanumān":"Vanara allies","Rāma":"Ayodhyā","Aṅgada":"Vanara allies","Jāmbavān":"Vanara allies","Vanara search party":"Vanara allies",
  "Sampāti":"Winged elders","Maināka":"Sacred beings","Surasā":"Sacred beings","Siṃhikā":"Ocean adversaries","Laṅkinī":"Guardians of Laṅkā",
  "Vibhīṣaṇa":"Royal house of Laṅkā","Sītā":"Ayodhyā","Trijaṭā":"Aśoka Vātikā","Rākṣasī guards":"Aśoka Vātikā","Kiṅkaras":"Forces of Laṅkā",
@@ -56,7 +65,7 @@ const groups:Record<string,string>={
  "Durdhara":"Commanders of Laṅkā","Praghasa":"Commanders of Laṅkā","Bhāsakarṇa":"Commanders of Laṅkā","Akṣa Kumāra":"Royal house of Laṅkā",
  "Indrajit":"Royal house of Laṅkā","Rāvaṇa":"Royal house of Laṅkā","Lakṣmaṇa":"Ayodhyā","Sugrīva":"Vanara allies",
 };
-const qualities:Record<string,string[]>={
+const qualities:Record<string,string[]>={"Suṣeṇa":["Medical knowledge","Care","Discernment"],
  "Hanumān":["Devotion","Courage","Discernment"],"Rāma":["Dharma","Compassion","Leadership"],"Aṅgada":["Leadership","Resolve"],
  "Jāmbavān":["Wisdom","Encouragement"],"Vanara search party":["Cooperation","Perseverance"],"Sampāti":["Vision","Service"],
  "Maināka":["Hospitality","Gratitude"],"Surasā":["Testing","Blessing"],"Siṃhikā":["Obstruction","Predation"],"Laṅkinī":["Guardianship","Omen"],
@@ -66,7 +75,7 @@ const qualities:Record<string,string[]>={
  "Durdhara":["Tenacity","Force"],"Praghasa":["Aggression","Force"],"Bhāsakarṇa":["Command","Force"],"Akṣa Kumāra":["Valor","Youth"],
  "Indrajit":["Strategy","Mastery of weapons"],"Rāvaṇa":["Power","Pride","Learning"],"Lakṣmaṇa":["Loyalty","Vigilance"],"Sugrīva":["Alliance","Kingship"],
 };
-const significance:Record<string,string>={
+const significance:Record<string,string>={"Suṣeṇa":"The rescue depends on skilled care as well as the strength that retrieves the medicine.",
  "Hanumān":"Embodies selfless service: immense power becomes sacred when directed by devotion.",
  "Rāma":"Represents dharma held through responsibility, compassion, and steadfast purpose.",
  "Sītā":"Her steadfastness makes hope, dignity, and inner freedom visible even in captivity.",
@@ -85,7 +94,13 @@ const significance:Record<string,string>={
  "Lakṣmaṇa":"Embodies alert, steadfast companionship in service of a shared duty.",
  "Sugrīva":"Represents alliance, restored responsibility, and coordinated action.",
 };
-const portraits:Record<string,CharacterPortraitData>={
+const portraits:Record<string,CharacterPortraitData>={"Suṣeṇa":{src:"/images/journey/hanuman/hfh-03-revealed-v1.png",position:"48% 48%"},
+ "Nala":{src:"/images/journey/hanuman/hfw-03-revealed-v1.png",position:"95% 65%"},
+ "Dhumrākṣa":{src:"/images/journey/hanuman/hfw-04-revealed-v1.png",position:"83% 49%"},
+ "Akampana":{src:"/images/journey/hanuman/hfw-05-revealed-v1.png",position:"86% 38%"},
+ "Kumuda":{src:"/images/journey/hanuman/hfw-05-revealed-v1.png",position:"14% 64%"},
+ "Mainda":{src:"/images/journey/hanuman/hfw-02-revealed-v1.png",position:"8% 68%"},
+
  "Hanumān":{src:"/images/characters/hanuman.png",position:"50% 18%",thumbnailPosition:"50% 22%"},
  "Rāma":{src:"/images/characters/rama.png",position:"50% 18%",thumbnailPosition:"50% 24%"},
  "Aṅgada":{src:"/images/characters/angada.png",position:"50% 24%",thumbnailPosition:"50% 27%"},
@@ -106,13 +121,15 @@ const portraits:Record<string,CharacterPortraitData>={
  "Akṣa Kumāra":{src:"/images/characters/lanka-sprite.png",position:"50% 38%",thumbnailPosition:"50% 36%",sprite:{column:1,row:2,columns:6,rows:3}},
  "Indrajit":{src:"/images/characters/indrajit-v2.png",position:"50% 23%",thumbnailPosition:"50% 27%"},
  "Rāvaṇa":{src:"/images/characters/ravana-v3.png",position:"50% 25%",thumbnailPosition:"50% 28%"},
+ "Bharata":{src:"/images/journey/hanuman/hff-03-revealed-v1.png",position:"65% 45%",thumbnailPosition:"65% 42%"},
+ "Śatrughna":{src:"/images/journey/hanuman/hff-04-revealed-v1.png",position:"68% 30%",thumbnailPosition:"68% 30%"},
  "Lakṣmaṇa":{src:"/images/characters/lakshmana-v2.png",position:"50% 30%",thumbnailPosition:"50% 28%"},
  "Sugrīva":{src:"/images/characters/lanka-sprite.png",position:"50% 39%",thumbnailPosition:"50% 37%",sprite:{column:5,row:2,columns:6,rows:3}},
 };
-const characterNames=Array.from(new Set([...initialProgress.unlockedCharacters,...journeyNodes.flatMap(n=>n.characters)]));
+const characterNames=Array.from(new Set([...initialProgress.unlockedCharacters,...[...journeyNodes,...meetingNodes,...warNodes,...herbsNodes,...finaleNodes].flatMap(n=>n.characters)]));
 const sourceCodes=new Set(["VR-GP","VR-HPS","RCM-GP","TRAD"]);
 export const characters:CharacterProfile[] = characterNames.map((name,i)=>{
- const appearanceNodes=journeyNodes.filter(n=>n.characters.includes(name));
+ const appearanceNodes=[...journeyNodes,...meetingNodes,...warNodes,...herbsNodes,...finaleNodes].filter(n=>n.characters.includes(name));
  const first=appearanceNodes[0];
  return {
   id:characterIdByName[name]??`character-${i+1}`,

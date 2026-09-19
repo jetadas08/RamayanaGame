@@ -1,0 +1,209 @@
+[
+  {
+    "id": "HFF-01",
+    "title": "Rāvaṇa Falls",
+    "story": "The long war reaches its decisive moment. Rāma and Rāvaṇa face one another in the final duel. Guided by Matali, Rāma releases the Brahma missile, which strikes Rāvaṇa and ends his life. The vānar army erupts in victory. For Hanumān, the moment completes the mission he has served since first learning of Sītā’s abduction — but the work of service is not yet finished.",
+    "explore": "Battlefield Interpretation: before the outcome is explained, inspect the unresolved battlefield and identify the evidence that this is the decisive confrontation. The player should distinguish Rāma’s direct agency from the supporting presence of Hanumān, Vibhīṣaṇa, Lakṣmaṇa, Sugrīva, and the vānar army.",
+    "interaction": "Agency Before Reveal: establish the final confrontation first, ask the player who appears positioned to perform the decisive act, then reveal the canonical outcome. The choice never changes canon; it teaches that being essential to a campaign is not the same as performing its final action.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "Who kills Rāvaṇa in the Vālmīki Rāmāyaṇa?",
+        "items": [
+          "A. Hanumān, because he has already defeated many rākṣasa warriors",
+          "B. Lakṣmaṇa, because he has already defeated Indrajit",
+          "C. Rāma",
+          "D. Vibhīṣaṇa, because he knows Rāvaṇa’s strengths and weaknesses"
+        ],
+        "answer": "C. Rāma",
+        "feedback": "Rāma releases the decisive missile that strikes Rāvaṇa and ends the battle."
+      },
+      {
+        "format": "Role matching",
+        "prompt": "Match the character to the role in the final war context:",
+        "items": [
+          "Rāma → ?",
+          "Hanumān → ?",
+          "Vibhīṣaṇa → ?"
+        ],
+        "answer": "Rāma → defeats Rāvaṇa; Hanumān → serves within Rāma’s allied campaign; Vibhīṣaṇa → ally and future king of Laṅkā",
+        "feedback": "The finale works best when the app preserves each character’s actual agency."
+      },
+      {
+        "format": "Multi-select",
+        "prompt": "Which statements are supported by this scene?",
+        "items": [
+          "A. Rāma defeats Rāvaṇa",
+          "B. Hanumān is present as part of the victorious allied campaign",
+          "C. Hanumān personally kills Rāvaṇa",
+          "D. The war’s central objective has been fulfilled"
+        ],
+        "answer": "A, B, and D",
+        "feedback": "Hanumān’s importance does not require transferring Rāma’s decisive act to him."
+      }
+    ],
+    "unlocks": "Shared Event Knowledge: Rāvaṇa’s defeat. Connection reinforcement: Rāma ↔ Hanumān = Devotion/Service; Hanumān → Rāvaṇa = Opposition remains historical, not the decisive-kill relation. No Sacred Object.",
+    "memory": "Perfect mastery reveals a short memory insight: Hanumān’s service is not diminished because Rāma performs the decisive act. His greatness lies in serving the mission faithfully without needing to own its culmination.",
+    "takeaway": "The mission is fulfilled through Rāma; Hanumān’s service now turns from war toward reunion.",
+    "teaser": "Next: Hanumān Brings Sītā the News — the messenger who once brought hope now brings victory.",
+    "lockedPrompt": "Wide cinematic battlefield after an immense duel, Rāma and Rāvaṇa still separated in a charged final moment, allied armies frozen in attention, Hanumān visible among the vānar leaders, dark storm light and restrained gold, no gore, no text.",
+    "revealedPrompt": "Wide cinematic aftermath of Rāvaṇa’s fall, Rāma standing at the center of the decisive victory while Lakṣmaṇa, Hanumān, Sugrīva, Vibhīṣaṇa and the vānar army witness the moment, solemn triumph rather than celebration-only, mature devotional epic style, no gore, no text.",
+    "sourceNote": "Use Yuddha 108 for the decisive death. Do not label this “Hanumān defeats Rāvaṇa.” This is a shared event with Rāma as primary agent."
+  },
+  {
+    "id": "HFF-02",
+    "title": "Hanumān Brings Sītā the News",
+    "story": "After Rāvaṇa’s defeat and Vibhīṣaṇa’s installation, Rāma sends Hanumān back into Laṅkā to Sītā. Hanumān approaches her respectfully and gives the news: Rāma, Lakṣmaṇa, Sugrīva and their allies are safe, Rāvaṇa has been killed, and Laṅkā is now under Vibhīṣaṇa. Sītā is overwhelmed with joy. When Hanumān asks for a message to bring back, her desire is simple: she longs to see Rāma.",
+    "explore": "Echo Observation: begin with the revealed environment before explanatory labels. Ask the player to notice what is familiar from the first Aśoka Vātikā encounter — Sītā’s position, Hanumān’s approach, distance, posture, and the changed quality of light — then reveal how the emotional state has shifted from uncertainty to fulfilled hope.",
+    "interaction": "Message Before Meaning: first reconstruct the message chain Rāma → Hanumān → Sītā → Hanumān → Rāma. Only afterward reveal the explicit callback to the earlier ring encounter, so the player experiences the recognition rather than being told it in advance.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "What news does Hanumān bring Sītā after the battle?",
+        "items": [
+          "A. The search has only just begun",
+          "B. Rāvaṇa has been killed and Rāma is safe",
+          "C. Sugrīva has left the alliance",
+          "D. Rāma has returned to Ayodhyā without her"
+        ],
+        "answer": "B. Rāvaṇa has been killed and Rāma is safe",
+        "feedback": "Hanumān’s second great message to Sītā transforms hope into confirmed victory."
+      },
+      {
+        "format": "Sequence",
+        "prompt": "Put Hanumān’s messenger role in order:",
+        "items": [
+          "1. Hanumān returns Sītā’s message to Rāma",
+          "2. Rāma sends Hanumān to Sītā",
+          "3. Hanumān tells Sītā of the victory",
+          "4. Sītā expresses her wish to see Rāma"
+        ],
+        "answer": "2 → 3 → 4 → 1",
+        "feedback": "The sequence mirrors Hanumān’s earlier messenger mission, but now the direction of hope has reversed."
+      },
+      {
+        "format": "Source-aware choice",
+        "prompt": "What does Sītā do when Hanumān offers to punish the rākṣasī attendants who had tormented her?",
+        "items": [
+          "A. She asks him to kill them",
+          "B. She refuses vengeance and speaks for compassion",
+          "C. She says nothing",
+          "D. She asks Vibhīṣaṇa to imprison them"
+        ],
+        "answer": "B. She refuses vengeance and speaks for compassion",
+        "feedback": "The scene adds an important dimension to Sītā’s character: even after suffering, she refuses retaliatory cruelty."
+      }
+    ],
+    "unlocks": "Character Knowledge: Sītā — compassion after victory; Hanumān — messenger of victory. Connection reinforcement: Hanumān → Sītā = Messenger/Service. Optional “story echo” badge linking HJ-10/HJ-11 to HFF-02.",
+    "memory": "Perfect mastery unlocks a “Story Echo” memory pairing the first Aśoka Vātikā meeting with this return: the same messenger, the same Sītā, but hope has become fulfilled news.",
+    "takeaway": "The same messenger who once carried hope now carries fulfillment.",
+    "teaser": "Next: Hanumān Goes Ahead to Bharata — before Rāma reaches Ayodhyā, Hanumān is sent ahead once more.",
+    "lockedPrompt": "Wide cinematic return to Aśoka Vātikā, Sītā beneath the tree as a familiar silhouette, Hanumān entering respectfully, environment visually echoing the earlier discovery scene but with dawn light beginning, no text.",
+    "revealedPrompt": "Wide cinematic emotional reunion scene in Aśoka Vātikā, Hanumān respectfully telling Sītā the news of Rāma’s victory, Sītā overcome with relief and joy, softer golden light replacing the earlier gloom, mature devotional style, no text.",
+    "sourceNote": "The scene should intentionally echo HJ-10/HJ-11 composition. That visual recurrence makes the player feel how far the mission has come."
+  },
+  {
+    "id": "HFF-03",
+    "title": "Hanumān Goes Ahead to Bharata",
+    "story": "As Rāma approaches Ayodhyā, Hanumān goes ahead to Bharata with the news of his return. Bharata, who has waited through the exile, asks how Rāma’s alliance with the vānaras came about. Hanumān recounts the great arc of the forest exile, Sītā’s abduction, the search, the crossing to Laṅkā, and the war. He then tells Bharata that Rāma is near and will soon arrive. The messenger who once approached Rāma on Sugrīva’s behalf now approaches Bharata on Rāma’s behalf.",
+    "explore": "Messenger Reconstruction: let the player compare the first envoy scene with this final messenger mission using visual/story evidence. The parallels — approaching on behalf of another, choosing speech carefully, establishing trust, preparing a meeting — should be inferred before they are summarized.",
+    "interaction": "Story Recap Chain: Bharata asks how the return became possible. The player reconstructs four major milestones from Hanumān’s account before the full canonical recap is shown. This turns memory of prior play into the interaction.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "Whom does Hanumān inform of Rāma’s imminent return before the reunion at Nandigrāma?",
+        "items": [
+          "A. Bharata",
+          "B. Rāvaṇa",
+          "C. Vāli",
+          "D. Sampāti"
+        ],
+        "answer": "A. Bharata",
+        "feedback": "Hanumān again serves as Rāma’s messenger, this time bringing news home."
+      },
+      {
+        "format": "Sequence",
+        "prompt": "Order these milestones as Hanumān recounts the story to Bharata:",
+        "items": [
+          "1. Bridge and war in Laṅkā",
+          "2. Sītā’s abduction",
+          "3. Alliance with Sugrīva",
+          "4. Hanumān finds Sītā"
+        ],
+        "answer": "2 → 3 → 4 → 1",
+        "feedback": "The recap turns the whole campaign into remembered service rather than a list of isolated encounters."
+      },
+      {
+        "format": "Connection Builder",
+        "prompt": "Which relationship is most directly activated by Hanumān’s mission here?",
+        "items": [
+          "A. Hanumān → Bharata = Messenger",
+          "B. Hanumān → Bharata = Opposition",
+          "C. Bharata → Hanumān = Teacher",
+          "D. Hanumān ↔ Bharata = Marriage"
+        ],
+        "answer": "A. Hanumān → Bharata = Messenger",
+        "feedback": "This lets Connections capture a relationship created at the very end of the campaign."
+      }
+    ],
+    "unlocks": "Character Memory: Bharata — waiting for Rāma and returning the kingdom held in trust. Inline Connection: resolve Hanumān → Bharata = Messenger within this encounter and animate it immediately into the local network; do not leave it as backlog. Bharata → Rāma = Devotion/Service is reinforced. Story artifact context: Rāma’s pādukā, but do not automatically add them to Hanumān’s Sacred Objects.",
+    "memory": "Perfect mastery unlocks a messenger-arc memory: Chapter I Hanumān approached Rāma on Sugrīva’s behalf; Chapter VIII Hanumān approaches Bharata on Rāma’s behalf.",
+    "takeaway": "Hanumān’s journey closes a circle: the envoy of the first chapter becomes the herald of Rāma’s return.",
+    "teaser": "Next: Ayodhyā — Service Continues — the mission ends where Rāma’s return becomes public and complete.",
+    "lockedPrompt": "Wide cinematic Nandigrāma scene, ascetic Bharata waiting with Rāma’s sandals nearby, a distant approaching figure of Hanumān not yet fully recognized, quiet expectancy, pale dawn and earthy gold, no text.",
+    "revealedPrompt": "Wide cinematic messenger scene at Nandigrāma, Hanumān speaking to Bharata as hope breaks across Bharata’s face, Rāma’s wooden sandals respectfully present, distant sky suggesting the approaching Pushpaka, devotional emotional realism, no text.",
+    "sourceNote": "Yuddha 126 contains Hanumān’s extensive recap to Bharata; Yuddha 127 begins with Bharata acting on Hanumān’s good news and the actual reception of Rāma."
+  },
+  {
+    "id": "HFF-04",
+    "title": "Ayodhyā — Service Continues",
+    "story": "Rāma reaches Nandigrāma and is reunited with Bharata. Bharata places Rāma’s wooden sandals at his feet and returns the kingdom he has held in trust. The company proceeds toward Ayodhyā, where preparations are made for Rāma’s coronation. Sugrīva, Hanumān and the allies enter the city with the returning family. During the coronation celebrations, gifts are bestowed upon the companions who served throughout the campaign, and Sītā gives a pearl necklace to Hanumān. The quest to find and rescue Sītā is complete; Hanumān’s defining relationship to Rāma remains service.",
+    "explore": "Homecoming Synthesis: instead of another three-card discovery, inspect the return scene and identify what has changed since Chapter I — who has returned, which relationships have been restored, which allies are still present, and where Hanumān stands within the completed mission.",
+    "interaction": "Campaign Memory Trail: reconstruct a short sequence of Hanumān memories from first envoy to final return, then identify the qualities that persist across those changing roles — discernment, messenger-service, and devotion. This is a synthesis of lived encounters, not a personality quiz.",
+    "mastery": [
+      {
+        "format": "Single choice",
+        "prompt": "What does Bharata return to Rāma at Nandigrāma?",
+        "items": [
+          "A. The kingdom he has held in trust",
+          "B. The royal authority over Kiṣkindhā",
+          "C. The command of the vānar army",
+          "D. Hanumān’s ring"
+        ],
+        "answer": "A. The kingdom he has held in trust",
+        "feedback": "Bharata receives Rāma back and returns the sovereignty he had preserved for him."
+      },
+      {
+        "format": "Single choice",
+        "prompt": "What gift does Sītā give Hanumān during the coronation celebrations in Yuddha Kāṇḍa 128?",
+        "items": [
+          "A. A pearl necklace",
+          "B. Rāma’s bow",
+          "C. The Cūḍāmaṇi",
+          "D. The royal sandals"
+        ],
+        "answer": "A. A pearl necklace",
+        "feedback": "The coronation scene explicitly records Sītā giving the necklace to Hanumān."
+      },
+      {
+        "format": "Campaign reflection",
+        "prompt": "Which statement best expresses Hanumān’s arc across the core campaign?",
+        "items": [
+          "A. He begins and ends primarily as a conqueror",
+          "B. His roles expand, but service remains the thread connecting envoy, scout, messenger, counselor, warrior and rescuer",
+          "C. He becomes king of Ayodhyā",
+          "D. He stops serving when the war ends"
+        ],
+        "answer": "B. His roles expand, but service remains the thread connecting envoy, scout, messenger, counselor, warrior and rescuer",
+        "feedback": "This is the campaign’s final learning synthesis: Hanumān’s power changes form according to what service requires."
+      }
+    ],
+    "unlocks": "Campaign completion. Character Knowledge: Hanumān — coronation honor; Bharata — kingdom returned; Rāma — coronation. Story artifact: pearl necklace from Sītā to Hanumān; keep as an unlockable coronation artifact unless Sacred Objects expansion is explicitly approved. Achievement suggestion: “Mission Fulfilled.”",
+    "memory": "Perfect mastery reveals the final Hanumān memory: his roles changed from envoy to scout, messenger, counselor, warrior, rescuer, and herald, but service remained the thread joining them.",
+    "takeaway": "The mission is fulfilled. Service continues.",
+    "teaser": "Follow Hanumān Complete. Primary CTA: Return to Campaign Map / Review Journey. Secondary future CTA may introduce another character path only when that path is ready.",
+    "lockedPrompt": "Wide cinematic approach to Ayodhyā, city in the distance adorned for return, Rāma’s party arriving with Hanumān among the vānar allies, the full coronation moment still hidden, sunrise gold and ivory atmosphere, no text.",
+    "revealedPrompt": "Wide cinematic coronation tableau in Ayodhyā, Rāma and Sītā enthroned after the return, Lakṣmaṇa, Bharata and Śatrughna present, Hanumān honored prominently but humbly among the companions, Sugrīva and Vibhīṣaṇa nearby, luminous saffron-gold ceremonial light, mature sacred-adventure style, no text.",
+    "sourceNote": "Yuddha 127 covers the Nandigrāma reception and Bharata’s return of the sandals/kingdom context; Yuddha 128 covers the return procession and coronation. The pearl-necklace gift to Hanumān is explicitly part of Yuddha 128."
+  }
+]

@@ -1,3 +1,9 @@
+import {finaleMastery} from "@/data/finale";
+import {herbsMastery} from "@/data/herbs";
+import {warMastery} from "@/data/war";
+import {meetingMastery} from "@/data/meeting";
+import {searchMastery,searchNodes} from "@/data/search";
+import {crossingMastery,crossingNodeIds} from "@/data/crossing";
 import {challengeFor,storedAnswerIsAnswered,storedAnswerIsCorrect} from "@/data/challenges";
 import {journeyNodes} from "@/data/journey";
 import type {Difficulty,JourneyNode,MasteryActivity,MasteryActivityType,NarrativeContext} from "@/lib/types";
@@ -54,6 +60,12 @@ function variedMultiSelectOrder(node:JourneyNode,options:{id:string;label:string
 }
 
 export function masteryActivityFor(node:JourneyNode,stage:Difficulty):MasteryActivity{
+ if(node.id.startsWith("HFF-"))return finaleMastery(node,stage);
+ if(node.id.startsWith("HFH-"))return herbsMastery(node,stage);
+ if(node.id.startsWith("HFW-"))return warMastery(node,stage);
+ if(node.id.startsWith("HFM-"))return meetingMastery(node,stage);
+ if(node.id.startsWith("HFS-")||["HJ-01","HJ-02","HJ-03"].includes(node.id))return searchMastery(node,stage);
+ if(crossingNodeIds.includes(node.id as typeof crossingNodeIds[number]))return crossingMastery(node,stage);
  const type=masteryFormatPlan[node.id][stage],challenge=challengeFor(node,stage,0),claimType=stage==="scholar"&&(node.id==="HJ-09"||node.id==="HJ-12")?"source-comparison":stage==="scholar"?"interpretation":"textual",base={id:`MA-${node.id}-${stage}`,eventId:node.id,stage,prompt:challenge.prompt,hint:stage==="explorer"?"Recall the people, place, or action you just encountered.":stage==="seeker"?"Follow the cause, relationship, or story order.":"Connect the event with its purpose and meaning.",explanation:challenge.explanation,sourceRefs:node.sourceLabels,unlocks:[],difficulty:stage,replayable:true,perspectives:perspectives(node),claimType:claimType as "textual"|"interpretation"|"source-comparison"};
  if(type==="singleSelect"||type==="sceneDiscovery"||type==="predictionChoice")return{...base,type,prompt:type==="sceneDiscovery"?`Find the detail that belongs in ${node.title} at ${node.place}.`:type==="predictionChoice"?`Before ${node.title} resolves: ${challenge.prompt}`:challenge.prompt,options:fourOptions(node,challenge.choices),correctAnswer:challenge.answer};
  if(type==="multiSelect"){
@@ -71,7 +83,15 @@ export function masteryActivityFor(node:JourneyNode,stage:Difficulty):MasteryAct
 export function encodeMasteryResponse(activity:MasteryActivity,response:string){return `${activity.id}|${response}`;}
 export function defaultMasteryResponse(activity:MasteryActivity){return activity.type==="sequence"?activity.items.map(item=>item.id).join(","):"";}
 export function masteryResponseIsCorrect(activity:MasteryActivity,response:string){if(activity.type==="multiSelect")return response.split(",").filter(Boolean).sort().join(",")===activity.correctState.slice().sort().join(",");if(activity.type==="sequence")return response===activity.correctState.join(",");if(activity.type==="matching")return response===activity.pairs.map(pair=>`${pair.id}=${pair.correct}`).join(";");return response===activity.correctAnswer;}
+function legacyCrossingResponseIsCorrect(node:JourneyNode,stage:Difficulty,response:string){
+ const type=masteryFormatPlan[node.id]?.[stage],challenge=challengeFor(node,stage,0);
+ if(type==="singleSelect"||type==="sceneDiscovery"||type==="predictionChoice")return response===challenge.answer;
+ if(type==="multiSelect")return response.split(",").filter(Boolean).sort().join(",")===["answer","reflection"].sort().join(",");
+ if(type==="sequence")return response===sequenceNodes(node).map(item=>item.id).join(",");
+ if(type==="matching")return response===[`place=${node.place}`,`event=${node.excerpt}`,`meaning=${node.teaching}`].join(";");
+ return false;
+}
 export function storedMasteryIsAnswered(node:JourneyNode,stage:Difficulty,value:string|undefined){if(!value)return false;const [id,response]=value.includes("|")?value.split(/\|([\s\S]+)/):["",value];if(id.startsWith("MA-"))return Boolean(response&&masteryActivityFor(node,stage).id===id);return storedAnswerIsAnswered(node,stage,value);}
-export function storedMasteryIsCorrect(node:JourneyNode,stage:Difficulty,value:string|undefined){if(!storedMasteryIsAnswered(node,stage,value)||!value)return false;const [id,response]=value.includes("|")?value.split(/\|([\s\S]+)/):["",value];if(id.startsWith("MA-"))return masteryResponseIsCorrect(masteryActivityFor(node,stage),response);return storedAnswerIsCorrect(node,stage,value);}
+export function storedMasteryIsCorrect(node:JourneyNode,stage:Difficulty,value:string|undefined){if(!storedMasteryIsAnswered(node,stage,value)||!value)return false;const [id,response]=value.includes("|")?value.split(/\|([\s\S]+)/):["",value];if(id.startsWith("MA-")){const current=masteryResponseIsCorrect(masteryActivityFor(node,stage),response);return current||(crossingNodeIds.includes(node.id as typeof crossingNodeIds[number])&&legacyCrossingResponseIsCorrect(node,stage,response));}return storedAnswerIsCorrect(node,stage,value);}
 
-export function masteryAudit(){const activities=journeyNodes.flatMap(node=>stages.map(stage=>masteryActivityFor(node,stage))),distribution=activities.reduce((counts,activity)=>({...counts,[activity.type]:(counts[activity.type]??0)+1}),{} as Record<string,number>);return{activities,distribution,singleOnlyNodes:journeyNodes.filter(node=>stages.every(stage=>masteryFormatPlan[node.id][stage]==="singleSelect")).map(node=>node.id),unsupportedSourceRefs:activities.filter(activity=>!activity.sourceRefs.length).map(activity=>activity.id),missingFeedback:activities.filter(activity=>!activity.explanation||!activity.hint).map(activity=>activity.id),duplicatePrompts:Array.from(new Set(activities.filter((activity,index)=>activities.findIndex(item=>item.prompt===activity.prompt)!==index).map(activity=>activity.prompt)))};}
+export function masteryAudit(){const audited=[...searchNodes,...journeyNodes],activities=audited.flatMap(node=>stages.map(stage=>masteryActivityFor(node,stage))),distribution=activities.reduce((counts,activity)=>({...counts,[activity.type]:(counts[activity.type]??0)+1}),{} as Record<string,number>);return{activities,distribution,singleOnlyNodes:journeyNodes.filter(node=>masteryFormatPlan[node.id]&&stages.every(stage=>masteryFormatPlan[node.id][stage]==="singleSelect")).map(node=>node.id),unsupportedSourceRefs:activities.filter(activity=>!activity.sourceRefs.length).map(activity=>activity.id),missingFeedback:activities.filter(activity=>!activity.explanation||!activity.hint).map(activity=>activity.id),duplicatePrompts:Array.from(new Set(activities.filter((activity,index)=>activities.findIndex(item=>item.prompt===activity.prompt)!==index).map(activity=>activity.prompt)))};}

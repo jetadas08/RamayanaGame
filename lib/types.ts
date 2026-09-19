@@ -38,7 +38,9 @@ export interface SelectMasteryActivity extends MasteryActivityBase {type:"single
 export interface MultiSelectMasteryActivity extends MasteryActivityBase {type:"multiSelect";options:Choice[];correctState:string[];}
 export interface SequenceMasteryActivity extends MasteryActivityBase {type:"sequence";items:Choice[];correctState:string[];}
 export interface MatchingMasteryActivity extends MasteryActivityBase {type:"matching";pairs:{id:string;left:string;correct:string}[];options:Choice[];correctState:Record<string,string>;}
-export type MasteryActivity=SelectMasteryActivity|MultiSelectMasteryActivity|SequenceMasteryActivity|MatchingMasteryActivity;
+export interface ConnectionMasteryActivity extends MasteryActivityBase {type:"connectionBuilder";options:Choice[];correctAnswer:string;connectionContext?:string;}
+export interface SourceComparisonMasteryActivity extends MasteryActivityBase {type:"sourceComparison";comparisonContext:string;options:Choice[];correctAnswer:string;}
+export type MasteryActivity=SourceComparisonMasteryActivity|ConnectionMasteryActivity|SelectMasteryActivity|MultiSelectMasteryActivity|SequenceMasteryActivity|MatchingMasteryActivity;
 
 export interface SubEncounter {
   id: string;
@@ -52,7 +54,7 @@ export interface SubEncounter {
 }
 
 interface ActivityBase { id:string; title:string; optional?:boolean; hidden?:boolean; sources:SourceId[]; claimType:ClaimType; }
-export interface DiscoveryHotspot { id:string; label:string; detail:string; kind:"character"|"object"|"place"|"insight"; unlockCharacter?:string; unlockRelationship?:string; }
+export interface DiscoveryHotspot { id:string; label:string; detail:string; inspectLabel?:string; kind:"character"|"object"|"place"|"insight"; unlockCharacter?:string; unlockRelationship?:string; }
 export interface SceneDiscoveryActivity extends ActivityBase { type:"sceneDiscovery"; sceneTitle:string; prompt:string; hotspots:DiscoveryHotspot[]; embedded?:boolean; }
 export interface PredictionChoiceActivity extends ActivityBase { type:"predictionChoice"; prompt:string; choices:Choice[]; canonicalAnswer:string; canonicalReveal:string; explanation:string; }
 export interface CharacterUnlockActivity extends ActivityBase { type:"characterUnlock"; characterNames:string[]; description:string; }
@@ -60,7 +62,9 @@ export interface RelationshipUnlockActivity extends ActivityBase { type:"relatio
 export interface ObjectDiscoveryActivity extends ActivityBase { type:"objectDiscovery"; objectId:string; prompt:string; }
 export interface StoryMemoryActivity extends ActivityBase { type:"storyMemory"; mode:"sequence"|"object-journey"|"relationship-match"; prompt:string; items:Choice[]; correctOrder:string[]; explanation:string; }
 export interface MasteryQuestionActivity extends ActivityBase { type:"masteryQuestion"; challenge:Challenge; }
-export type EncounterActivity=SceneDiscoveryActivity|PredictionChoiceActivity|CharacterUnlockActivity|RelationshipUnlockActivity|ObjectDiscoveryActivity|StoryMemoryActivity|MasteryQuestionActivity;
+export interface ConnectionBuilderActivity extends ActivityBase {type:"connectionBuilder";prompt:string;fromOptions:Choice[];toOptions:Choice[];relationOptions:Choice[];correct:[string,string,string];relationshipId:string;}
+export interface EvidenceSortActivity extends ActivityBase {type:"evidenceSort";prompt:string;categories:Choice[];statements:{id:string;label:string;correct:string}[];explanation:string;}
+export type EncounterActivity=EvidenceSortActivity|ConnectionBuilderActivity|SceneDiscoveryActivity|PredictionChoiceActivity|CharacterUnlockActivity|RelationshipUnlockActivity|ObjectDiscoveryActivity|StoryMemoryActivity|MasteryQuestionActivity;
 export interface EncounterReward { id:string; type:"character"|"relationship"|"object"|"insight"|"achievement"; label:string; }
 export type SacredObjectType="signet-ring"|"crest-jewel"|"ornament"|"token"|"weapon"|"emblem"|"ritual-object";
 export interface SacredObject {
@@ -257,10 +261,20 @@ export interface JourneyProgressState {
   relationshipChallengeAnswers: Record<string, string>;
   characterChallengeAnswers: Record<string, string>;
   sceneDiscoveries: string[];
+  revealedScenes: string[];
+  meetingCompletedNodes: string[];
+  searchCompletedNodes: string[];
+  herbsCompletedNodes: string[];
+  finaleCompletedNodes: string[];
+  campaignComplete: boolean;
+  warCompletedNodes: string[];
+  legacySearchAccess: boolean;
   hiddenDiscoveries: string[];
   discoveredObjects: string[];
   predictionChoices: Record<string,string>;
   storyMemoryAnswers: Record<string,string>;
+  searchBoardAnswers: Record<string,string>;
+  crossingTrailAnswers: Record<string,string>;
   nodeAttempts: Record<string,number>;
   achievements: string[];
   difficulty: Difficulty;
@@ -319,6 +333,7 @@ export interface CharacterKnowledgeProgress {
 }
 
 export interface Relationship {
+  finaleUnlockAt?:number;roleContext?:string;herbsUnlockAt?:number;warUnlockAt?:number;
   id: string;
   fromCharacterId: string;
   toCharacterId: string;

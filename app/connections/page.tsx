@@ -25,7 +25,7 @@ export default function ConnectionsPage(){
  const {progress,recentRelationshipUnlocks,acknowledgeRelationshipUnlocks}=useProgress();
  const [mode,setMode]=useState<Mode>("explore"),[family,setFamily]=useState<FamilyFilter>("all"),[focus,setFocus]=useState("hanuman"),[depth,setDepth]=useState<NetworkDepth>("first"),[selectedIds,setSelectedIds]=useState<string[]>([]);
  useEffect(()=>{if(recentRelationshipUnlocks.length){const timer=setTimeout(acknowledgeRelationshipUnlocks,5000);return()=>clearTimeout(timer);}},[recentRelationshipUnlocks,acknowledgeRelationshipUnlocks]);
- const availableIds=useMemo(()=>availableRelationshipIds(progress.completedNodes.length),[progress.completedNodes.length]);
+ const availableIds=useMemo(()=>availableRelationshipIds(progress.completedNodes.length,progress.meetingCompletedNodes.length,progress.warCompletedNodes.length,progress.herbsCompletedNodes.length,progress.finaleCompletedNodes.length),[progress.completedNodes.length,progress.meetingCompletedNodes.length,progress.warCompletedNodes.length,progress.herbsCompletedNodes.length,progress.finaleCompletedNodes.length]);
  const availableSet=useMemo(()=>new Set(availableIds),[availableIds]);
  const discovered=useMemo(()=>relationships.filter(edge=>progress.unlockedRelationships.includes(edge.id)),[progress.unlockedRelationships]);
  const availableUndiscovered=relationships.filter(edge=>availableSet.has(edge.id)&&!progress.unlockedRelationships.includes(edge.id)&&progress.unlockedCharacters.includes(nameFor(edge.fromCharacterId))&&progress.unlockedCharacters.includes(nameFor(edge.toCharacterId)));
