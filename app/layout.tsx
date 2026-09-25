@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { ProgressProvider } from "@/components/progress-provider";
 import { SiteHeader } from "@/components/site-header";
+import { RouteFocus } from "@/components/route-focus";
 import "./tailwind.css";
 import "./globals.scss";
 import "./atlas.scss";
@@ -12,5 +13,5 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
-  return <html lang="en"><body><ProgressProvider><SiteHeader />{children}</ProgressProvider></body></html>;
+  return <html lang="en"><body><ProgressProvider><SiteHeader /><RouteFocus/>{children}</ProgressProvider></body></html>;
 }

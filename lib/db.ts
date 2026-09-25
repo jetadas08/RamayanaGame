@@ -54,11 +54,13 @@ export async function ensureSchema() {
         encounter_progress LONGTEXT NULL,
         achievements LONGTEXT NOT NULL,
         difficulty ENUM('explorer','seeker','scholar') NOT NULL DEFAULT 'explorer',
+        reset_epoch VARCHAR(36) NOT NULL DEFAULT '',
         updated_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         CONSTRAINT fk_progress_user FOREIGN KEY (user_id) REFERENCES user_profiles(id) ON DELETE CASCADE
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci`);
       await db.execute("ALTER TABLE journey_progress ADD COLUMN IF NOT EXISTS relationship_challenges LONGTEXT NULL AFTER answered_challenges");
       await db.execute("ALTER TABLE journey_progress ADD COLUMN IF NOT EXISTS encounter_progress LONGTEXT NULL AFTER relationship_challenges");
+      await db.execute("ALTER TABLE journey_progress ADD COLUMN IF NOT EXISTS reset_epoch VARCHAR(36) NOT NULL DEFAULT '' AFTER difficulty");
     })().catch(error => { globalForMaria.mariaReady = undefined; throw error; });
   }
   return globalForMaria.mariaReady;

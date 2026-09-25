@@ -7,7 +7,7 @@ import {herbsNodes} from '@/data/herbs';
 import {finaleNodes} from '@/data/finale';
 import {allCompletedNodeIds,canEnterNode,nodeMastery} from '@/lib/progress';
 import type {JourneyNode,JourneyProgressState,CampaignChapter} from '@/lib/types';
-export type GameplayStatus='Locked'|'Available'|'In Progress'|'Complete'|'Mastered';
+export type GameplayStatus='Locked'|'Available'|'Current'|'In Progress'|'Complete'|'Mastered';
 const nodes=[...meetingNodes,...searchNodes,...journeyNodes,...warNodes,...herbsNodes,...finaleNodes];
 export function encounterStatus(node:JourneyNode,progress:JourneyProgressState):GameplayStatus{
  if(allCompletedNodeIds(progress).includes(node.id))return nodeMastery(progress,node).every(Boolean)?'Mastered':'Complete';
@@ -20,6 +20,7 @@ export function chapterStatus(chapter:CampaignChapter,progress:JourneyProgressSt
  if(!statuses.length)return 'Locked';
  if(statuses.every(s=>s==='Mastered'))return 'Mastered';
  if(statuses.every(s=>s==='Mastered'||s==='Complete'))return 'Complete';
+ if(chapter.playableNodeIds.includes(progress.currentNode))return 'Current';
  if(statuses.some(s=>s==='Complete'||s==='Mastered'||s==='In Progress'))return 'In Progress';
  return statuses.some(s=>s==='Available')?'Available':'Locked';
 }

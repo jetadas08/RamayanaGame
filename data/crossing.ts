@@ -8,14 +8,14 @@ export const crossingMemoryNames=[
  "Respect Without Delay",
  "Intelligence Preserves Strength",
  "Discernment Recognizes Danger",
- "Strength Joins Discernment",
+ "Strength Becomes What Service Requires",
 ];
 export const crossingMemories=[
- "Hanumān commits the Search Board’s evidence, destination, token, and purpose to the leap toward Laṅkā.",
+ "Hanumān carries the Search Compass’s evidence, destination, token, and purpose into the leap toward Laṅkā.",
  "Hanumān honors Maināka’s hospitality without abandoning the urgency of Rāma’s mission.",
  "Hanumān answers Surasā’s escalating challenge with adaptability rather than wasted force.",
  "Hanumān distinguishes Siṃhikā’s predatory seizure from an offer or test and confronts the threat directly.",
- "Hanumān crosses Laṅkā’s guarded threshold with measured force, ready to exchange movement for concealment.",
+ "Hanumān enters Laṅkā in a reduced form, showing that disciplined strength becomes exactly what the mission requires.",
 ];
 
 const options=(...labels:string[])=>labels.map((label,index)=>({id:String.fromCharCode(97+index),label}));
@@ -45,9 +45,9 @@ export function crossingMastery(node:JourneyNode,stage:Difficulty):MasteryActivi
   if(stage==="seeker")return {...base(node,stage,"Match each ocean encounter to the response its evidence required.","The same traveler responds differently because the situations are different."),type:"matching",pairs:[{id:"mainaka",left:"Maināka",correct:"Acknowledge"},{id:"surasa",left:"Surasā",correct:"Adapt"},{id:"simhika",left:"Siṃhikā",correct:"Confront"}],options:options("Acknowledge","Adapt","Confront").map((item,index)=>({...item,id:["Acknowledge","Adapt","Confront"][index]})),correctState:{mainaka:"Acknowledge",surasa:"Adapt",simhika:"Confront"}};
   return single("Which new obstacle most clearly justifies direct confrontation?",["A predator forcibly drags the traveler away from the mission","A host offers optional shelter","A gate presents a solvable riddle","A witness asks for clarification"],"a","Direct confrontation is justified by active predatory harm, not mere interruption or difficulty.");
  }
- if(stage==="explorer")return single("What must Hanumān preserve at Laṅkā’s guarded threshold?",["Entry, secrecy, and proportionate force","Maximum destruction before entering","A public announcement of his arrival"],"a","The next phase requires entry without sacrificing the hidden search.");
- if(stage==="seeker")return {...base(node,stage,"Place the crossing responses in the order Hanumān demonstrates them.","Commitment is refined by acknowledgement, adaptation, confrontation, and measured entry."),type:"sequence",items:[{id:"adapt",label:"Adapt to the test"},{id:"commit",label:"Commit to the leap"},{id:"measure",label:"Use measured force at the threshold"},{id:"acknowledge",label:"Acknowledge hospitality"},{id:"confront",label:"Confront the predatory threat"}],correctState:["commit","acknowledge","adapt","confront","measure"]};
- return {...base(node,stage,"Which qualities complete the crossing? Select all that apply.","Strength succeeds because mission focus, adaptability, discernment, and proportionate response tell it how to act."),type:"multiSelect",options:options("Strength","Mission focus","Adaptability","Discernment","Maximum force in every encounter"),correctState:["a","b","c","d"]};
+ if(stage==="explorer")return single("What change prepares Hanumān to enter guarded Laṅkā?",["He deliberately reduces his form","He remains in the immense form used for the leap","He abandons concealment and summons the army"],"a","The crossing displayed immense power; entry begins with a smaller form suited to concealment.");
+ if(stage==="seeker")return single("Why does Hanumān choose a reduced form before entering Laṅkā?",["To preserve secrecy and adapt his strength to the hidden search","Because crossing the ocean has left him powerless","To make Laṅkinī underestimate him before an open battle"],"a","His capability remains; restraint makes it fit a mission that now depends on secrecy and careful movement.");
+ return single("A powerful rescuer can force a guarded entrance or use a quiet route that protects the people inside. Which principle best guides the choice?",["Use the least conspicuous and least forceful response that still fulfills the mission","Display maximum power so no one questions the rescuer’s strength","Choose the most dramatic route even if it exposes the mission","Avoid acting because restraint and capability cannot coexist"],"a","Proportionate power chooses the smallest effective response. Strength is disciplined when it becomes exactly what the mission requires.");
 }
 
 export const crossingTrailEntries=[
@@ -55,5 +55,5 @@ export const crossingTrailEntries=[
  {id:"HJ-05",title:"Maināka",appears:"An interruption in the route",requires:"Recognition of hospitality without delay",response:"Acknowledge",principle:"Respect without losing momentum"},
  {id:"HJ-06",title:"Surasā",appears:"A blocking escalation",requires:"A change of scale and method",response:"Adapt",principle:"Intelligence preserves strength"},
  {id:"HJ-07",title:"Siṃhikā",appears:"A loss of speed",requires:"Recognition of a predatory threat",response:"Confront",principle:"Some dangers must be overcome"},
- {id:"HJ-08",title:"Laṅkinī",appears:"A guardian at the threshold",requires:"Entry, secrecy, and proportionality",response:"Interpret",principle:"Measured force opens the hidden mission"},
+ {id:"HJ-08",title:"Laṅkinī",appears:"A monumental gate guarded against a small messenger",requires:"Stealth, entry, and proportionality",response:"Reduce and enter",principle:"Small form, great capability"},
 ];

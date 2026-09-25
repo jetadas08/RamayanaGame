@@ -1,38 +1,60 @@
-import { NextResponse } from "next/server";
-import type { RowDataPacket } from "mysql2";
-import { getCurrentUser } from "@/lib/auth";
-import { execute, queryRows } from "@/lib/db";
-import { normalizeProgress } from "@/lib/progress";
+import {randomUUID} from "crypto";
+import {NextResponse} from "next/server";
+import {getCurrentUser} from "@/lib/auth";
+import {ensureSchema,getDb,queryRows} from "@/lib/db";
+import {mergeProgress,normalizeProgress} from "@/lib/progress";
+import {progressColumns,progressFromRow,progressValues,type ProgressRow} from "@/lib/progress-storage";
 
-export async function GET() {
-  const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  type ProgressRow = RowDataPacket & { current_node: string; completed_nodes: string; unlocked_characters: string; unlocked_relationships: string; answered_challenges: string; relationship_challenges: string|null; encounter_progress:string|null; achievements: string; difficulty: "explorer" | "seeker" | "scholar" };
-  const rows = await queryRows<ProgressRow[]>("SELECT current_node, completed_nodes, unlocked_characters, unlocked_relationships, answered_challenges, relationship_challenges, encounter_progress, achievements, difficulty FROM journey_progress WHERE user_id = ? LIMIT 1", [user.id]);
-  const stored = rows[0];
-  const encounter=stored?.encounter_progress?JSON.parse(stored.encounter_progress):{};
-  const progress = normalizeProgress(stored ? {
-    currentNode: stored.current_node,
-    completedNodes: JSON.parse(stored.completed_nodes),
-    unlockedCharacters: JSON.parse(stored.unlocked_characters),
-    unlockedRelationships: JSON.parse(stored.unlocked_relationships),
-    answeredChallenges: JSON.parse(stored.answered_challenges),
-    relationshipChallengeAnswers: JSON.parse(stored.relationship_challenges??"{}"),
-    ...encounter,
-    achievements: JSON.parse(stored.achievements),
-    difficulty: stored.difficulty,
-  } : null);
-  return NextResponse.json({ progress });
+const select=`SELECT ${progressColumns} FROM journey_progress WHERE user_id = ? LIMIT 1`;
+const insert=`INSERT IGNORE INTO journey_progress (user_id, ${progressColumns}) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+const update=`UPDATE journey_progress SET current_node=?, completed_nodes=?, unlocked_characters=?, unlocked_relationships=?, answered_challenges=?, relationship_challenges=?, encounter_progress=?, achievements=?, difficulty=? WHERE user_id=?`;
+
+export async function GET(){
+ const user=await getCurrentUser();
+ if(!user)return NextResponse.json({error:"Unauthorized"},{status:401});
+ const rows=await queryRows<ProgressRow[]>(select,[user.id]);
+ return NextResponse.json({progress:progressFromRow(rows[0]),resetEpoch:rows[0]?.reset_epoch??""});
 }
 
-export async function PUT(request: Request) {
-  const user = await getCurrentUser();
-  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  const progress = normalizeProgress(await request.json());
-  await execute(`INSERT INTO journey_progress
-    (user_id, current_node, completed_nodes, unlocked_characters, unlocked_relationships, answered_challenges, relationship_challenges, encounter_progress, achievements, difficulty)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    ON DUPLICATE KEY UPDATE current_node=VALUES(current_node), completed_nodes=VALUES(completed_nodes), unlocked_characters=VALUES(unlocked_characters), unlocked_relationships=VALUES(unlocked_relationships), answered_challenges=VALUES(answered_challenges), relationship_challenges=VALUES(relationship_challenges), encounter_progress=VALUES(encounter_progress), achievements=VALUES(achievements), difficulty=VALUES(difficulty)`,
-    [user.id, progress.currentNode, JSON.stringify(progress.completedNodes), JSON.stringify(progress.unlockedCharacters), JSON.stringify(progress.unlockedRelationships), JSON.stringify(progress.answeredChallenges), JSON.stringify(progress.relationshipChallengeAnswers), JSON.stringify({finaleCompletedNodes:progress.finaleCompletedNodes,campaignComplete:progress.campaignComplete,herbsCompletedNodes:progress.herbsCompletedNodes,warCompletedNodes:progress.warCompletedNodes,meetingCompletedNodes:progress.meetingCompletedNodes,searchCompletedNodes:progress.searchCompletedNodes,legacySearchAccess:progress.legacySearchAccess,revealedScenes:progress.revealedScenes,characterChallengeAnswers:progress.characterChallengeAnswers,sceneDiscoveries:progress.sceneDiscoveries,hiddenDiscoveries:progress.hiddenDiscoveries,discoveredObjects:progress.discoveredObjects,predictionChoices:progress.predictionChoices,storyMemoryAnswers:progress.storyMemoryAnswers,searchBoardAnswers:progress.searchBoardAnswers,crossingTrailAnswers:progress.crossingTrailAnswers,nodeAttempts:progress.nodeAttempts}), JSON.stringify(progress.achievements), progress.difficulty]);
-  return NextResponse.json({ progress });
+// The row lock serializes writes from tabs and devices. Each writer merges with
+// the latest committed record, so a stale snapshot cannot erase earned progress.
+export async function PUT(request:Request){
+ const user=await getCurrentUser();
+ if(!user)return NextResponse.json({error:"Unauthorized"},{status:401});
+ const body=await request.json();
+ const incoming=normalizeProgress(body?.progress??body);
+ const clientEpoch=typeof body?.resetEpoch==="string"?body.resetEpoch:"";
+ await ensureSchema();
+ const connection=await getDb().getConnection();
+ try{
+  await connection.beginTransaction();
+  await connection.execute(insert,[user.id,...progressValues(normalizeProgress(null)),""]);
+  const [rows]=await connection.execute<ProgressRow[]>(`${select} FOR UPDATE`,[user.id]);
+  const row=rows[0];
+  if(clientEpoch!==row.reset_epoch){
+   await connection.rollback();
+   return NextResponse.json({error:"This journey was reset in another session.",progress:progressFromRow(row),resetEpoch:row.reset_epoch},{status:409});
+  }
+  const progress=mergeProgress(progressFromRow(row),incoming);
+  await connection.execute(update,[...progressValues(progress).slice(0,9),user.id]);
+  await connection.commit();
+  return NextResponse.json({progress,resetEpoch:row.reset_epoch});
+ }catch(error){await connection.rollback();throw error;}finally{connection.release();}
+}
+
+export async function DELETE(){
+ const user=await getCurrentUser();
+ if(!user)return NextResponse.json({error:"Unauthorized"},{status:401});
+ await ensureSchema();
+ const connection=await getDb().getConnection();
+ try{
+  await connection.beginTransaction();
+  const progress=normalizeProgress(null),resetEpoch=randomUUID();
+  await connection.execute(insert,[user.id,...progressValues(progress),""]);
+  const [rows]=await connection.execute<ProgressRow[]>(`${select} FOR UPDATE`,[user.id]);
+  if(!rows[0])throw new Error("Progress record unavailable");
+  await connection.execute(update.replace(" WHERE user_id=?",", reset_epoch=? WHERE user_id=?"),[...progressValues(progress).slice(0,9),resetEpoch,user.id]);
+  await connection.commit();
+  return NextResponse.json({progress,resetEpoch});
+ }catch(error){await connection.rollback();throw error;}finally{connection.release();}
 }

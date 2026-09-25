@@ -2,6 +2,7 @@ import {finaleNodes} from "@/data/finale";
 import {herbsNodes} from "@/data/herbs";
 import {warNodes} from "@/data/war";
 import {meetingNodes} from "@/data/meeting";
+import {searchNodes} from "@/data/search";
 import { initialProgress, journeyNodes } from "@/data/journey";
 import type { CharacterPortraitData, CharacterProfile } from "@/lib/types";
 import {characterIdByName} from "@/data/character-ids";
@@ -126,10 +127,11 @@ const portraits:Record<string,CharacterPortraitData>={"Suṣeṇa":{src:"/images
  "Lakṣmaṇa":{src:"/images/characters/lakshmana-v2.png",position:"50% 30%",thumbnailPosition:"50% 28%"},
  "Sugrīva":{src:"/images/characters/lanka-sprite.png",position:"50% 39%",thumbnailPosition:"50% 37%",sprite:{column:5,row:2,columns:6,rows:3}},
 };
-const characterNames=Array.from(new Set([...initialProgress.unlockedCharacters,...[...journeyNodes,...meetingNodes,...warNodes,...herbsNodes,...finaleNodes].flatMap(n=>n.characters)]));
+const storyNodes=[...meetingNodes,...searchNodes,...journeyNodes,...warNodes,...herbsNodes,...finaleNodes];
+const characterNames=Array.from(new Set([...initialProgress.unlockedCharacters,...storyNodes.flatMap(n=>n.characters)]));
 const sourceCodes=new Set(["VR-GP","VR-HPS","RCM-GP","TRAD"]);
 export const characters:CharacterProfile[] = characterNames.map((name,i)=>{
- const appearanceNodes=[...journeyNodes,...meetingNodes,...warNodes,...herbsNodes,...finaleNodes].filter(n=>n.characters.includes(name));
+ const appearanceNodes=storyNodes.filter(n=>n.characters.includes(name));
  const first=appearanceNodes[0];
  return {
   id:characterIdByName[name]??`character-${i+1}`,
@@ -145,6 +147,7 @@ export const characters:CharacterProfile[] = characterNames.map((name,i)=>{
   spiritualSignificance:significance[name] ?? "This figure helps reveal how courage, motive, and consequence shape the movement of the story.",
   sources:Array.from(new Set(appearanceNodes.flatMap(n=>n.sourceLabels).filter(source=>sourceCodes.has(source)))),
   unlockNode:first.number,
+  unlockNodeId:first.id,
   unlockEncounter:first.title,
  };
 });

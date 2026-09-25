@@ -11,10 +11,10 @@ import type {JourneyNode,SceneDiscoveryActivity} from "@/lib/types";
 import styles from "@/components/meeting-experience.module.scss";
 
 const hotspotPositions:Record<string,[number,number][]>= {
- "HFM-01":[[22,25],[77,68],[36,53]],
- "HFM-02":[[35,43],[47,52],[64,42]],
- "HFM-03":[[65,45],[38,55],[85,38]],
- "HFM-04":[[75,39],[23,40],[54,45]],
+ "HFM-01":[[18,34],[79,76],[43,66]],
+ "HFM-02":[[39,58],[49,49],[64,63]],
+ "HFM-03":[[65,48],[30,62],[86,55]],
+ "HFM-04":[[63,49],[39,53],[51,56]],
  "HFM-05":[[52,53],[65,53],[36,50]],
 };
 
@@ -60,14 +60,14 @@ export function MeetingCompletion({node,stars,rewards,nextSlug,onReplay}:{node:J
   <div className={styles.completionBody}>
    <div className={styles.completionCopy}>
     <span className={styles.seal}><Check/></span><p className="eyebrow">{chapterComplete?"Chapter I complete":"Encounter complete"}</p><h2 id="meeting-complete-title">{chapterComplete?"The meeting becomes a mission.":node.title}</h2>
-    <div className={styles.stars} role="status" aria-label={`${stars} of 3 mastery stars earned`}>{[0,1,2].map(index=><Star key={index} fill={index<stars?"currentColor":"none"}/>)}</div>
+    <div className={styles.stars} role="img" aria-label={`${stars} of 3 mastery stars earned`}>{[0,1,2].map(index=><Star key={index} fill={index<stars?"currentColor":"none"}/>)}</div>
     <p className={styles.takeaway}>{node.completionTakeaway}</p>
-    <aside className={styles.memory} data-unlocked={stars===3} aria-live="polite"><Sparkles/><div><small>{stars===3?"Three-star memory revealed":"Memory still to discover"}</small><strong>{stars===3?memoryName:"Replay mastery to reveal this memory"}</strong><p>{stars===3?memory:"The story continues without perfect mastery; your best score is preserved."}</p>{stars===3&&<Link href="/characters/hanuman">View Hanumān’s memories →</Link>}</div></aside>
-    {primary&&<Link className={styles.primaryUnlock} href={primary.href??"/progress"}><span>{primary.type==="relationship"?<Link2/>:<Sparkles/>}</span><div><small>Primary addition to your journey</small><strong>{primary.detail}</strong></div><ChevronRight/></Link>}
+    {primary&&<Link className={styles.primaryUnlock} href={primary.href??"/progress"}><span>{primary.type==="relationship"?<Link2/>:<Sparkles/>}</span><div><small>{primary.label}</small><strong>{primary.detail}</strong></div><ChevronRight/></Link>}
     <div className={styles.actions}>{chapterComplete?<Link className="cta-primary" href="/journey/hanuman/southern-search-begins">Begin Chapter II — The Search <ChevronRight/></Link>:nextSlug?<Link className="cta-primary" href={`/journey/hanuman/${nextSlug}`}>Continue the chapter <ChevronRight/></Link>:null}<button type="button" onClick={onReplay}><RotateCcw/> {stars<3?"Improve mastery":"Replay mastery"}</button></div>
+    <aside className={styles.memory} data-unlocked={stars===3}><Sparkles/><div><small>{stars===3?"Three-star memory revealed":"Memory still to discover"}</small><strong>{stars===3?memoryName:"Replay mastery to reveal this memory"}</strong><p>{stars===3?memory:"The story continues without perfect mastery; your best score is preserved."}</p>{stars===3&&<Link href="/characters/hanuman">View Hanumān’s memories →</Link>}</div></aside>
    </div>
    {chapterComplete&&<aside className={styles.chapterRecap}><p className="eyebrow">Chapter I · The Meeting</p><h3>Five moments become one mission</h3><ol><li><b>Observe</b><span>Hanumān approaches uncertainty with care.</span></li><li><b>Speak</b><span>Rāma recognizes learning and restraint.</span></li><li><b>Understand</b><span>Sītā’s absence gives the meeting purpose.</span></li><li><b>Connect</b><span>Rāma and Sugrīva form an alliance.</span></li><li><b>Remember</b><span>Sītā’s signs make the search concrete.</span></li></ol><footer><small>Coming next</small><strong>Chapter II — The Search</strong><p>The meeting gives way to responsibility.</p></footer></aside>}
   </div>
-  {secondary.length>0&&<details className={styles.added}><summary>Added to your journey · {secondary.length}</summary><ul>{secondary.map(reward=><li key={reward.id}><small>{reward.label}</small><strong>{reward.detail}</strong></li>)}</ul></details>}
+  {secondary.length>0&&<details className={styles.added}><summary>{secondary.every(reward=>reward.label==="In your record")?"In your record":"Journey record"} · {secondary.length}</summary><ul>{secondary.map(reward=><li key={reward.id}><small>{reward.label}</small><strong>{reward.detail}</strong></li>)}</ul></details>}
  </section>;
 }

@@ -1,3 +1,5 @@
+import {bhaktiPassOne} from "@/data/bhakti-pass-one";
+
 export interface NodeCompletionDefinition {
  completionTakeaway:string;
  nextNodeTeaser?:string;
@@ -6,15 +8,15 @@ export interface NodeCompletionDefinition {
 export const hanumanNodeCompletion:Record<string,NodeCompletionDefinition>={
  "HJ-01":{completionTakeaway:"At the sea’s edge, despair becomes a decision: the search can continue when shared purpose is stronger than fear.",nextNodeTeaser:"An aged witness brings the knowledge that restores direction to the search."},
  "HJ-02":{completionTakeaway:"Sampāti’s far-reaching sight turns loss into service and gives the search party the direction it needs.",nextNodeTeaser:"Jāmbavān helps Hanumān remember the strength that has always been his."},
- "HJ-03":{completionTakeaway:"The search becomes responsibility. Jāmbavān does not give Hanumān new power; he awakens the courage and capacity Hanumān had forgotten.",nextNodeTeaser:"Remembered strength becomes action as Hanumān commits himself to the ocean crossing."},
- "HJ-04":{completionTakeaway:"Hanumān’s leap joins strength, courage, and devotion in one purposeful act toward Laṅkā.",nextNodeTeaser:"A golden mountain rises from the sea with an offer of rest and hospitality."},
+ "HJ-03":{completionTakeaway:bhaktiPassOne.strengthRemembered.text,nextNodeTeaser:"Remembered strength becomes action as Hanumān commits himself to the ocean crossing."},
+ "HJ-04":{completionTakeaway:bhaktiPassOne.purposefulLeap.text,nextNodeTeaser:"A golden mountain rises from the sea with an offer of rest and hospitality."},
  "HJ-05":{completionTakeaway:"Hanumān honors Maināka’s kindness without surrendering the urgency of Rāma’s work.",nextNodeTeaser:"A divine test asks Hanumān to answer expanding force with intelligence and agility."},
  "HJ-06":{completionTakeaway:"By becoming small after growing vast, Hanumān shows that true strength includes flexibility and discernment.",nextNodeTeaser:"The next obstacle is a genuine threat that seizes Hanumān through his shadow."},
  "HJ-07":{completionTakeaway:"Hanumān distinguishes a sacred test from a consuming threat and acts with the firmness the moment requires.",nextNodeTeaser:"At Laṅkā’s threshold, its guardian confronts the unseen messenger."},
- "HJ-08":{completionTakeaway:"Strength joins discernment. Commitment, respect, adaptation, necessary force, and measured entry complete the crossing; movement now becomes concealment.",nextNodeTeaser:"Chapter IV — Sītā in Laṅkā: the journey is no longer about crossing space, but finding Sītā without being discovered."},
- "HJ-09":{completionTakeaway:"Vibhīṣaṇa shows that conscience and goodness can remain alive even within an unjust kingdom.",nextNodeTeaser:"The long search reaches its heart when Hanumān finally finds Sītā in the grove."},
- "HJ-10":{completionTakeaway:"Hanumān finds Sītā and approaches with patience, careful observation, and compassion rather than haste.",nextNodeTeaser:"Rāma’s ring must turn a stranger’s words into recognizable hope and trust."},
- "HJ-11":{completionTakeaway:"The ring proves Hanumān’s message, while Sītā’s reply entrusts him with hope to carry home.",nextNodeTeaser:"Hanumān’s mission becomes impossible for Laṅkā to ignore as resistance escalates in the grove."},
+ "HJ-08":{completionTakeaway:"Strength joins discernment. Hanumān enters in reduced form and uses only the force required; open crossing becomes concealed search.",nextNodeTeaser:"Chapter IV — Sītā in Laṅkā: the journey is no longer about crossing space, but finding Sītā without being discovered."},
+ "HJ-09":{completionTakeaway:"Hanumān neither trusts blindly nor rejects by appearance: he verifies that Vibhīṣaṇa’s signs form a reliable pattern.",nextNodeTeaser:"In the guarded grove, hope depends on identifying Sītā without rushing the reveal."},
+ "HJ-10":{completionTakeaway:bhaktiPassOne.sitaFound.text,nextNodeTeaser:"Rāma’s ring must now turn carried trust into proof an unknown messenger can make recognizable."},
+ "HJ-11":{completionTakeaway:"The search becomes hope: relationship, message, and Rāma’s Ring agree, allowing Sītā to recognize and trust the messenger.",nextNodeTeaser:"Chapter V shifts from hidden observation to public action as Hanumān’s mission becomes impossible for Laṅkā to ignore."},
  "HJ-12":{completionTakeaway:"Through every escalation, Hanumān’s power remains governed by mission and carries him toward Rāvaṇa’s court.",nextNodeTeaser:"Bound before the king, Hanumān must speak Rāma’s warning without fear."},
  "HJ-13":{completionTakeaway:"Hanumān stands before power as a messenger, offering Rāvaṇa a final path away from destruction.",nextNodeTeaser:"The punishment meant to shame Hanumān becomes a warning carried across Laṅkā."},
  "HJ-14":{completionTakeaway:"Hanumān transforms cruelty into consequence, yet keeps the fire in service of the larger mission.",nextNodeTeaser:"With Sītā’s message and token, Hanumān must cross the ocean once more and return to Rāma."},

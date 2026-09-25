@@ -21,7 +21,7 @@ export function CharacterPortrait({name,portrait,large=false,usage}:{name:string
  const isThumbnail=resolvedUsage==="medallion"||resolvedUsage==="reward";
  const focalPosition=(isThumbnail&&portrait.thumbnailPosition)||portrait.position||DEFAULT_PORTRAIT_POSITION;
  if(!portrait.sprite){
-  return <Image src={portrait.src} alt={`Illustrated portrait of ${name}`} fill sizes={portraitSizes[resolvedUsage]} quality={95} className="object-cover" style={{objectPosition:focalPosition}}/>;
+  return <Image src={portrait.src} alt={isThumbnail?"":`Illustrated portrait of ${name}`} fill sizes={portraitSizes[resolvedUsage]} quality={95} className="object-cover" style={{objectPosition:focalPosition}}/>;
  }
 
  // The legacy Laṅkā artwork contains six columns and three portrait rows.
@@ -38,7 +38,7 @@ export function CharacterPortrait({name,portrait,large=false,usage}:{name:string
  const topOffset=(row*cellHeightInCellWidths+cropWithinCell)/visibleHeightInCellWidths*100;
  return <Image
   src={portrait.src}
-  alt={`Illustrated portrait of ${name}`}
+  alt={isThumbnail?"":`Illustrated portrait of ${name}`}
   width={1254}
   height={1254}
   quality={95}

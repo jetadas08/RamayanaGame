@@ -2,7 +2,7 @@ export type ConfidenceLevel = "A" | "B" | "C" | "D" | "E";
 export type DisplayType = "point" | "region" | "route" | "narrative";
 export type Difficulty = "explorer" | "seeker" | "scholar";
 export type RelationshipType = "family" | "marriage" | "devotion" | "service" | "teacher" | "alliance" | "friendship" | "opposition" | "messenger" | "protector" | "guidance";
-export type NarrativeContext = "hanuman" | "rama" | "sita" | "bharata" | "ravana";
+export type NarrativeContext = "hanuman" | "rama" | "sita" | "lakshmana" | "bharata" | "ravana";
 export type RelationshipChallengeType = "identify-type" | "complete-character" | "missing-network" | "connection-chain";
 export type CharacterProfileSection = "overview" | "family" | "guidance" | "connections" | "journey" | "events" | "objects" | "sources";
 export type CharacterProfileDepth = "major" | "supporting" | "encounter";
@@ -22,6 +22,7 @@ export type CharacterKnowledgeUnlock =
 export interface Choice {
   id: string;
   label: string;
+  feedback?: string;
 }
 
 export interface Challenge {
@@ -33,7 +34,7 @@ export interface Challenge {
 }
 
 export type MasteryActivityType="singleSelect"|"multiSelect"|"sequence"|"matching"|"sceneDiscovery"|"predictionChoice"|"connectionBuilder"|"objectMatch"|"whoAmI"|"missingStoryStep"|"sourceComparison"|"trueFalse";
-interface MasteryActivityBase {id:string;eventId:string;stage:Difficulty;type:MasteryActivityType;prompt:string;hint:string;explanation:string;sourceRefs:string[];unlocks:string[];difficulty:Difficulty;replayable:boolean;perspectives:NarrativeContext[];claimType:"textual"|"interpretation"|"source-comparison";}
+interface MasteryActivityBase {id:string;eventId:string;stage:Difficulty;type:MasteryActivityType;prompt:string;hint:string;explanation:string;misconceptionFeedback?:string;sourceRefs:string[];unlocks:string[];difficulty:Difficulty;replayable:boolean;perspectives:NarrativeContext[];claimType:"textual"|"interpretation"|"source-comparison";}
 export interface SelectMasteryActivity extends MasteryActivityBase {type:"singleSelect"|"sceneDiscovery"|"predictionChoice";options:Choice[];correctAnswer:string;}
 export interface MultiSelectMasteryActivity extends MasteryActivityBase {type:"multiSelect";options:Choice[];correctState:string[];}
 export interface SequenceMasteryActivity extends MasteryActivityBase {type:"sequence";items:Choice[];correctState:string[];}
@@ -56,14 +57,14 @@ export interface SubEncounter {
 interface ActivityBase { id:string; title:string; optional?:boolean; hidden?:boolean; sources:SourceId[]; claimType:ClaimType; }
 export interface DiscoveryHotspot { id:string; label:string; detail:string; inspectLabel?:string; kind:"character"|"object"|"place"|"insight"; unlockCharacter?:string; unlockRelationship?:string; }
 export interface SceneDiscoveryActivity extends ActivityBase { type:"sceneDiscovery"; sceneTitle:string; prompt:string; hotspots:DiscoveryHotspot[]; embedded?:boolean; }
-export interface PredictionChoiceActivity extends ActivityBase { type:"predictionChoice"; prompt:string; choices:Choice[]; canonicalAnswer:string; canonicalReveal:string; explanation:string; }
+export interface PredictionChoiceActivity extends ActivityBase { type:"predictionChoice"; prompt:string; choices:Choice[]; canonicalAnswer:string; canonicalReveal:string; explanation:string; feedbackByChoice?:Record<string,string>; revisable?:boolean; }
 export interface CharacterUnlockActivity extends ActivityBase { type:"characterUnlock"; characterNames:string[]; description:string; }
 export interface RelationshipUnlockActivity extends ActivityBase { type:"relationshipUnlock"; relationshipIds:string[]; description:string; }
 export interface ObjectDiscoveryActivity extends ActivityBase { type:"objectDiscovery"; objectId:string; prompt:string; }
 export interface StoryMemoryActivity extends ActivityBase { type:"storyMemory"; mode:"sequence"|"object-journey"|"relationship-match"; prompt:string; items:Choice[]; correctOrder:string[]; explanation:string; }
 export interface MasteryQuestionActivity extends ActivityBase { type:"masteryQuestion"; challenge:Challenge; }
 export interface ConnectionBuilderActivity extends ActivityBase {type:"connectionBuilder";prompt:string;fromOptions:Choice[];toOptions:Choice[];relationOptions:Choice[];correct:[string,string,string];relationshipId:string;}
-export interface EvidenceSortActivity extends ActivityBase {type:"evidenceSort";prompt:string;categories:Choice[];statements:{id:string;label:string;correct:string}[];explanation:string;}
+export interface EvidenceSortActivity extends ActivityBase {type:"evidenceSort";prompt:string;categories:Choice[];statements:{id:string;label:string;correct:string;feedbackByCategory?:Record<string,string>}[];explanation:string;}
 export type EncounterActivity=EvidenceSortActivity|ConnectionBuilderActivity|SceneDiscoveryActivity|PredictionChoiceActivity|CharacterUnlockActivity|RelationshipUnlockActivity|ObjectDiscoveryActivity|StoryMemoryActivity|MasteryQuestionActivity;
 export interface EncounterReward { id:string; type:"character"|"relationship"|"object"|"insight"|"achievement"; label:string; }
 export type SacredObjectType="signet-ring"|"crest-jewel"|"ornament"|"token"|"weapon"|"emblem"|"ritual-object";
@@ -147,7 +148,7 @@ export interface JourneyNode {
 
 export type CharacterPathId = NarrativeContext;
 export type KandaId = "kiskindha" | "sundara" | "yuddha";
-export type CampaignId = "hanuman";
+export type CampaignId = CharacterPathId;
 export type EventContentStatus = "playable" | "planned" | "sourceReviewRequired";
 export type CharacterPathImportance = "major" | "supporting" | "contextual" | "indirect";
 export type CharacterPathPerspective = "primary" | "secondary" | "contextual";
@@ -250,7 +251,7 @@ export interface CharacterJourneyProgress {
 }
 
 export interface JourneyProgressState {
-  schemaVersion: 2;
+  schemaVersion: 3;
   globalKnowledge: GlobalKnowledgeProgress;
   characterJourneys: Partial<Record<CharacterPathId, CharacterJourneyProgress>>;
   currentNode: string;
@@ -276,6 +277,8 @@ export interface JourneyProgressState {
   searchBoardAnswers: Record<string,string>;
   crossingTrailAnswers: Record<string,string>;
   nodeAttempts: Record<string,number>;
+  encounterPhases:Record<string,"arrive"|"explore"|"story"|"unlock"|"mastery"|"complete">;
+  recentChanges: {kind:"character"|"relationship"|"object"|"chapter"|"story";id:string}[];
   achievements: string[];
   difficulty: Difficulty;
 }
@@ -388,6 +391,7 @@ export interface CharacterProfile {
   spiritualSignificance: string;
   sources: string[];
   unlockNode: number;
+  unlockNodeId: string;
   unlockEncounter: string;
 }
 

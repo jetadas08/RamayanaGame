@@ -1,5 +1,6 @@
 import {finaleMemories,finaleMemoryNames,finaleNodes} from "@/data/finale";
-import {meetingMemories,meetingMemoryNames} from "@/data/meeting";
+import {meetingMemories,meetingMemoryNames,meetingNodes} from "@/data/meeting";
+import {searchNodes} from "@/data/search";
 import {herbsNodes} from "@/data/herbs";
 import {warNodes} from "@/data/war";
 import type {CharacterChallenge,CharacterChallengeType,CharacterKnowledgeProgress,CharacterKnowledgeProfileDefinition,CharacterKnowledgeScope,CharacterKnowledgeUnlockMethod,CharacterProfileDepth,CharacterProfileField,CharacterProfileSection,JourneyProgressState,SourceId,SourceReference} from "@/lib/types";
@@ -7,6 +8,7 @@ import {characterNameById} from "@/data/character-ids";
 import {journeyNodes} from "@/data/journey";
 import {characters,relationships} from "@/data/discoveries";
 import {sacredObjects} from "@/data/encounter-activities";
+import {orderedSourceIds} from "@/lib/source-readiness";
 
 const sections:CharacterProfileSection[]=["overview","family","guidance","connections","journey","events","objects","sources"];
 const source=(id:SourceId,summary:string,claimType:SourceReference["claimType"]="textualFact"):SourceReference=>({source:id,claimType,summary,verification:"planningReference"});
@@ -33,13 +35,14 @@ const seeds:Seed[]=[
 ];
 
 const relationshipSection=(seed:Seed):CharacterProfileSection=>seed.relationshipId?.includes("JAMBAVAN-HANUMAN-GUIDANCE")||seed.relationshipId?.includes("VIBHISHANA-RAVANA-GUIDANCE")?"guidance":seed.relationshipId?.includes("FAMILY")?"family":"connections";
+const witnessedEventForSeed:Record<string,string>={hanuman:"HJ-10",rama:"HFS-02",sita:"HJ-11",sugriva:"HFM-04",ravana:"HJ-13"};
 const genericProfileFields:CharacterProfileField[]=seeds.flatMap(seed=>{
  const challengeId=`CK-${seed.id.toUpperCase()}`;
  const base:CharacterProfileField[]=[
   {id:`${seed.id}-title`,characterId:seed.id,section:"overview",label:"Story role",value:seed.title,sources:[source(seed.source,seed.title)],sourceStatus:"Textual",unlock:{kind:"discovery"}},
-  {id:`${seed.id}-quality`,characterId:seed.id,section:"overview",label:"Meaning",value:seed.quality,sources:[source(seed.source,seed.quality,"learningInterpretation")],sourceStatus:"Textual",unlock:{kind:"discovery"}},
+  {id:`${seed.id}-quality`,characterId:seed.id,section:"overview",label:"Meaning",value:seed.quality,sources:[source(seed.source,seed.quality,"learningInterpretation")],sourceStatus:"Textual",unlock:{kind:"challenge",challengeId}},
   {id:`${seed.id}-first-encounter`,characterId:seed.id,section:"journey",label:"First discovered",value:seed.node,sources:[source(seed.source,`Appears at ${seed.node}`)],sourceStatus:"Textual",unlock:{kind:"journey",nodeId:seed.node}},
-  {id:`${seed.id}-event`,characterId:seed.id,section:"events",label:"Key event",value:seed.event,sources:[source(seed.source,seed.event)],sourceStatus:"Textual",unlock:{kind:"challenge",challengeId}},
+  {id:`${seed.id}-event`,characterId:seed.id,section:"events",label:"Key event",value:seed.event,sources:[source(seed.source,seed.event)],sourceStatus:"Textual",unlock:{kind:"journey",nodeId:witnessedEventForSeed[seed.id]??seed.node}},
   {id:`${seed.id}-source`,characterId:seed.id,section:"sources",label:"Source layer",value:seed.source,sources:[source(seed.source,"Primary approved layer for this dossier")],sourceStatus:seed.source==="RCM-GP"?"Traditional":"Textual",unlock:{kind:"journey",nodeId:seed.node}},
  ];
  if(seed.relationshipId)base.push({id:`${seed.id}-relationship`,characterId:seed.id,section:relationshipSection(seed),label:relationshipSection(seed)==="family"?"Family":"Connection",value:seed.relationshipLabel!,relationshipId:seed.relationshipId,sources:[source(seed.source,seed.relationshipLabel!)],sourceStatus:"Textual",unlock:{kind:"relationship",relationshipId:seed.relationshipId}});
@@ -65,7 +68,7 @@ const ravanaFields:CharacterProfileField[]=[
  {id:"ravana-court-place",characterId:"ravana",section:"journey",label:"Major encounter",value:"HJ-13 · Rāvaṇa’s Court, Laṅkā",sources:ravanaSource("The messenger is brought before Rāvaṇa in his court"),sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HJ-13"}},
  {id:"ravana-city-place",characterId:"ravana",section:"journey",label:"Kingdom in the journey",value:"Laṅkā, represented as an epic region rather than a precise modern point",sources:[source("VR-HPS","Vālmīki places Rāvaṇa’s city upon Trikūṭa in Laṅkā"),source("TRAD","Modern Sri Lanka is retained only as a broad traditional macro-identification","traditionalIdentification")],sourceStatus:"Debated / multiple traditions",unlock:{kind:"journey",nodeId:"HJ-13"}},
  {id:"ravana-battle-command",characterId:"ravana",section:"events",label:"Escalation",value:"Sends successive forces against Hanumān after the grove is destroyed",sources:ravanaSource("The grove battle escalates through Laṅkā’s forces and princes"),sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HJ-12"}},
- {id:"ravana-rejects-warning",characterId:"ravana",section:"events",label:"Court decision",value:"Rejects the counsel to return Sītā and avoid destruction",sources:ravanaSource("Rāvaṇa refuses the alternative offered by the messenger"),sourceStatus:"Textual",unlock:{kind:"challenge",challengeId:"CK-RAVANA-COURT"}},
+ {id:"ravana-rejects-warning",characterId:"ravana",section:"events",label:"Court decision",value:"Rejects the counsel to return Sītā and avoid destruction",sources:ravanaSource("Rāvaṇa refuses the alternative offered by the messenger"),sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HJ-13"}},
  {id:"ravana-orders-tail",characterId:"ravana",section:"events",label:"Punishment ordered",value:"Orders Hanumān’s tail wrapped and burned",sources:ravanaSource("The punishment ordered in court begins the burning episode"),sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HJ-14"}},
  {id:"ravana-consequence",characterId:"ravana",section:"events",label:"Consequence",value:"The intended humiliation becomes the burning of Laṅkā",sources:ravanaSource("Hanumān turns the punishment back upon the city","learningInterpretation"),sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HJ-14"}},
  {id:"ravana-source-vr",characterId:"ravana",section:"sources",label:"Shared textual layer",value:"VR-GP · VR-HPS",sources:ravanaSource("Approved Vālmīki source layers used for the V1 dossier"),sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HJ-13"}},
@@ -84,7 +87,7 @@ const majorProfileConfig:Record<string,{journey:string[];events:string[];relatio
  indrajit:{journey:["HJ-12","HJ-13"],events:["HJ-12","HJ-13"]},
 };
 const validSourceIds=new Set<SourceId>(["VR-GP","VR-HPS","RCM-GP","TRAD"]);
-const sourceRefs=(ids:string[],summary:string,claimType:SourceReference["claimType"]="textualFact")=>ids.filter((id):id is SourceId=>validSourceIds.has(id as SourceId)).map(id=>source(id,summary,claimType));
+const sourceRefs=(ids:string[],summary:string,claimType:SourceReference["claimType"]="textualFact")=>orderedSourceIds(ids).filter((id):id is SourceId=>validSourceIds.has(id as SourceId)).map(id=>source(id,summary,claimType));
 function familyDescriptor(characterId:string,relation:(typeof relationships)[number]){
  if(relation.type==="marriage")return{label:"Spouse",familyGroup:"Spouse" as const};
  if(relation.label.includes("brother"))return{label:"Sibling",familyGroup:"Siblings" as const};
@@ -99,7 +102,7 @@ function buildMajorProfile(characterId:string):CharacterProfileField[]{
   {id:`${characterId}-identity-name`,characterId,section:"overview",label:"Name",value:character.name,sources:identitySources,sourceStatus:"Textual",unlock:{kind:"discovery"}},
   {id:`${characterId}-identity-script`,characterId,section:"overview",label:"Sanskrit record",value:character.sanskrit,sources:identitySources,sourceStatus:"Textual",unlock:{kind:"discovery"}},
   {id:`${characterId}-identity-title`,characterId,section:"overview",label:"V1 title",value:seed.title,sources:identitySources,sourceStatus:"Textual",unlock:{kind:"journey",nodeId:firstNode}},
-  {id:`${characterId}-identity-role`,characterId,section:"overview",label:"Story role",value:character.role,sources:identitySources,sourceStatus:"Textual",unlock:{kind:"discovery"}},
+  {id:`${characterId}-identity-role`,characterId,section:"overview",label:"Story role",value:character.role,sources:identitySources,sourceStatus:"Textual",unlock:{kind:"journey",nodeId:character.unlockNodeId}},
   {id:`${characterId}-identity-group`,characterId,section:"overview",label:"Kingdom or group",value:character.group,sources:identitySources,sourceStatus:"Textual",unlock:{kind:"journey",nodeId:firstNode}},
   {id:`${characterId}-identity-meaning`,characterId,section:"overview",label:"Learning meaning",value:character.spiritualSignificance,sources:sourceRefs(profileSources,`V1 learning interpretation for ${character.name}`,"learningInterpretation"),sourceStatus:"Textual",unlock:{kind:"challenge",challengeId}},
   {id:`${characterId}-identity-first`,characterId,section:"overview",label:"First V1 appearance",value:firstNode,sources:identitySources,sourceStatus:"Textual",unlock:{kind:"journey",nodeId:firstNode}},
@@ -107,9 +110,9 @@ function buildMajorProfile(characterId:string):CharacterProfileField[]{
  const combinedQualities=characterId==="rama"||characterId==="hanuman";
  for(const [index,quality] of (combinedQualities?[character.qualities.join(" · ")]:character.qualities).entries())fields.push({id:`${characterId}-identity-quality-${index+1}`,characterId,section:"overview",label:index===0?"Key qualities":"Supporting quality",value:quality,sources:sourceRefs(profileSources,`Learning quality attached to ${character.name}`,"learningInterpretation"),sourceStatus:"Textual",unlock:{kind:"challenge",challengeId}});
  if(characterId==="hanuman")fields.push({id:"hanuman-father",characterId,section:"family",label:"Divine father",familyGroup:"Parents",value:"Vāyu",sources:[source("VR-GP","Hanumān is identified with Vāyu as divine father")],sourceStatus:"Textual",unlock:{kind:"journey",nodeId:"HJ-04"}});
- fields.push({id:`${characterId}-event-v1-role`,characterId,section:"events",label:"V1 narrative role",value:seed.event,sources:[source(seed.source,seed.event)],sourceStatus:"Textual",unlock:{kind:"challenge",challengeId}});
+ fields.push({id:`${characterId}-event-v1-role`,characterId,section:"events",label:"V1 narrative role",value:seed.event,sources:[source(seed.source,seed.event)],sourceStatus:"Textual",unlock:{kind:"journey",nodeId:witnessedEventForSeed[characterId]??seed.node}});
  for(const nodeId of config.journey){const node=journeyNodes.find(item=>item.id===nodeId)!;fields.push({id:`${characterId}-journey-${nodeId.toLowerCase()}`,characterId,section:"journey",label:"Journey encounter",value:`${node.id} · ${node.title} · ${node.place}`,sources:sourceRefs(node.sourceLabels,`${character.name} appears in ${node.title}`),sourceStatus:node.sourceLabels.includes("TRAD")?"Debated / multiple traditions":"Textual",unlock:{kind:"journey",nodeId}});}
- for(const [index,nodeId] of config.events.entries()){const node=journeyNodes.find(item=>item.id===nodeId)!;fields.push({id:`${characterId}-event-${nodeId.toLowerCase()}`,characterId,section:"events",label:"Key event",value:node.excerpt,sources:sourceRefs(node.sourceLabels,node.excerpt),sourceStatus:"Textual",unlock:index===0?{kind:"challenge",challengeId}:{kind:"journey",nodeId}});}
+ for(const nodeId of config.events){const node=journeyNodes.find(item=>item.id===nodeId)!;fields.push({id:`${characterId}-event-${nodeId.toLowerCase()}`,characterId,section:"events",label:"Key event",value:node.excerpt,sources:sourceRefs(node.sourceLabels,node.excerpt),sourceStatus:"Textual",unlock:{kind:"journey",nodeId}});}
  const related=(config.relationships?relationships.filter(item=>config.relationships!.includes(item.id)):relationships.filter(item=>item.fromCharacterId===characterId||item.toCharacterId===characterId));
  for(const relation of related){const otherId=relation.fromCharacterId===characterId?relation.toCharacterId:relation.fromCharacterId,otherName=characterNameById[otherId]??otherId,isFamily=relation.type==="family"||relation.type==="marriage",isGuidance=relation.type==="guidance"||relation.type==="teacher",family=isFamily?familyDescriptor(characterId,relation):undefined;fields.push({id:`${characterId}-relationship-${relation.id.toLowerCase()}`,characterId,section:isFamily?"family":isGuidance?"guidance":"connections",label:family?.label??relation.type[0].toUpperCase()+relation.type.slice(1),familyGroup:family?.familyGroup,value:isFamily?otherName:`${characterNameById[relation.fromCharacterId]} ${relation.label} ${characterNameById[relation.toCharacterId]}`,relatedCharacterId:otherId,relationshipId:relation.id,sources:relation.sources.map(id=>source(id,relation.label)),sourceStatus:relation.sources.length===1&&relation.sources[0]==="RCM-GP"?"Later devotional tradition":"Textual",unlock:{kind:"relationship",relationshipId:relation.id}});}
  for(const object of sacredObjects.filter(item=>item.relatedCharacters.includes(character.name)))fields.push({id:`${characterId}-object-${object.id}`,characterId,section:"objects",label:"Sacred object",value:`${object.name} — ${object.description}`,sources:object.sources,sourceStatus:"Textual",unlock:{kind:"object",objectId:object.id}});
@@ -139,7 +142,7 @@ const scoped=(field:CharacterProfileField):CharacterProfileField=>{
 const coreFields=[...genericProfileFields.filter(field=>!enrichedMajorIds.has(field.characterId)),...majorProfileFields,...ravanaFields];
 const profiledIds=new Set(coreFields.map(field=>field.characterId));
 const conciseEncounterFields:CharacterProfileField[]=characters.filter(character=>!profiledIds.has(character.id)).flatMap(character=>{
- const node=[...journeyNodes,...warNodes,...herbsNodes,...finaleNodes].find(item=>item.id===character.appearances[0])!;
+ const node=[...meetingNodes,...searchNodes,...journeyNodes,...warNodes,...herbsNodes,...finaleNodes].find(item=>item.id===character.appearances[0])!;
  const ids=character.sources.filter((id):id is SourceId=>validSourceIds.has(id as SourceId));
  return [
   {id:`${character.id}-identity`,characterId:character.id,section:"overview",label:"Identity",value:character.role,sources:sourceRefs(ids,`V1 role for ${character.name}`),sourceStatus:"Textual",unlock:{kind:"discovery"}},
@@ -231,7 +234,7 @@ export function characterFieldIsUnlocked(field:CharacterProfileField,progress:Jo
  if(!progress.unlockedCharacters.includes(characterNameById[field.characterId]??""))return false;
  switch(field.unlock.kind){
   case "discovery":return true;
-  case "journey":return [...progress.meetingCompletedNodes,...progress.completedNodes,...progress.warCompletedNodes,...progress.finaleCompletedNodes,...progress.herbsCompletedNodes].includes(field.unlock.nodeId);
+  case "journey":return progress.revealedScenes.includes(field.unlock.nodeId)||[...progress.meetingCompletedNodes,...progress.searchCompletedNodes,...progress.completedNodes,...progress.warCompletedNodes,...progress.finaleCompletedNodes,...progress.herbsCompletedNodes].includes(field.unlock.nodeId);
   case "relationship":return progress.unlockedRelationships.includes(field.unlock.relationshipId);
   case "challenge":return characterAnswerIsCorrect(progress,field.unlock.challengeId);
   case "object":return progress.discoveredObjects.includes(field.unlock.objectId);
@@ -239,6 +242,10 @@ export function characterFieldIsUnlocked(field:CharacterProfileField,progress:Jo
   case "sourceExploration":return false;
   case "pendingReview":return false;
  }
+}
+/** One visibility rule for the role claim wherever a character appears. */
+export function characterRoleIsKnown(characterId:string,progress:JourneyProgressState):boolean{
+ return characterFieldsFor(characterId).some(field=>field.label==="Story role"&&characterFieldIsUnlocked(field,progress));
 }
 export function characterKnowledgeProgress(characterId:string,progress:JourneyProgressState,scope:CharacterKnowledgeScope="hanuman-v1"):CharacterKnowledgeProgress{
  const profile=characterKnowledgeProfileFor(characterId),fields=characterFieldsFor(characterId,scope).filter(field=>field.countsTowardCompletion!==false),unlockedFields=fields.filter(field=>characterFieldIsUnlocked(field,progress));

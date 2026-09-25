@@ -29,18 +29,18 @@ export function AuthDialog({ open, onClose }: { open: boolean; onClose: () => vo
   }
 
   return (
-    <dialog ref={dialogRef} onCancel={onClose} aria-labelledby="account-title" className="m-auto w-full max-w-md bg-transparent p-0 backdrop:bg-black/80">
+    <dialog ref={dialogRef} onCancel={onClose} aria-labelledby="account-title" className="account-dialog m-auto w-full max-w-md bg-transparent p-0 backdrop:bg-black/80">
       <div className="relative w-full max-w-md overflow-hidden rounded-[2rem] border border-[#e5b669]/25 bg-[#241810] p-7 shadow-2xl">
-        <button onClick={onClose} className="absolute right-5 top-5 cursor-pointer text-[var(--muted)] hover:text-white" aria-label="Close"><X size={20} /></button>
+        <button onClick={onClose} className="absolute right-2 top-2 flex h-11 w-11 cursor-pointer items-center justify-center text-[var(--muted)] hover:text-white" aria-label="Close"><X size={20} /></button>
         <div className="mb-6 flex size-12 items-center justify-center rounded-2xl bg-[var(--saffron)]/15 text-[var(--gold)]"><Sparkles /></div>
         <p className="eyebrow">Carry your journey with you</p>
         <h2 id="account-title" className="font-display mt-2 text-3xl text-[var(--cream)]">{mode === "register" ? "Create your traveller profile" : "Welcome back"}</h2>
         <p className="mt-3 text-sm leading-6 text-[var(--muted)]">{mode === "register" ? "Your guest discoveries will be moved into your account automatically." : "Continue your journey on this or any other device."}</p>
         <form onSubmit={submit} className="mt-6 space-y-3">
           {mode === "register" && <input aria-label="Your name" autoComplete="name" name="name" required minLength={2} placeholder="Your name" className="field" />}
-          <input aria-label="Email address" autoComplete="email" name="email" required type="email" placeholder="Email address" className="field" />
-          <input aria-label="Password" autoComplete={mode==="register"?"new-password":"current-password"} name="password" required type="password" minLength={8} placeholder="Password (8+ characters)" className="field" />
-          {error && <p className="text-sm text-[#f1a07f]">{error}</p>}
+          <input aria-label="Email address" aria-describedby={error?"account-error":undefined} autoComplete="email" name="email" required type="email" placeholder="Email address" className="field" />
+          <input aria-label="Password" aria-describedby={error?"account-error":undefined} autoComplete={mode==="register"?"new-password":"current-password"} name="password" required type="password" minLength={8} placeholder="Password (8+ characters)" className="field" />
+          {error && <p id="account-error" role="alert" className="text-sm text-[#f1a07f]">{error}</p>}
           <Button className="mt-2 w-full" disabled={busy} type="submit"><LogIn size={16} />{busy ? "Please wait…" : mode === "register" ? "Save my journey" : "Continue journey"}</Button>
         </form>
         <button className="mt-5 w-full cursor-pointer text-center text-sm text-[var(--muted)] hover:text-[var(--cream)]" onClick={() => { setError(""); setMode(mode === "register" ? "login" : "register"); }}>

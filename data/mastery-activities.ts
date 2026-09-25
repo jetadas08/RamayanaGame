@@ -1,9 +1,13 @@
-import {finaleMastery} from "@/data/finale";
+import {finaleMastery,legacyFinaleMastery} from "@/data/finale";
 import {herbsMastery} from "@/data/herbs";
 import {warMastery} from "@/data/war";
-import {meetingMastery} from "@/data/meeting";
+import {legacyMeetingMastery,meetingMastery} from "@/data/meeting";
 import {searchMastery,searchNodes} from "@/data/search";
 import {crossingMastery,crossingNodeIds} from "@/data/crossing";
+import {chapterFourMastery,chapterFourNodeIds} from "@/data/chapter-four";
+import {chapterFiveMastery,chapterFiveNodeIds} from "@/data/chapter-five";
+import {chapterSixMastery,chapterSixNodeIds} from "@/data/chapter-six";
+import {chapterSevenMastery,chapterSevenNodeIds} from "@/data/chapter-seven";
 import {challengeFor,storedAnswerIsAnswered,storedAnswerIsCorrect} from "@/data/challenges";
 import {journeyNodes} from "@/data/journey";
 import type {Difficulty,JourneyNode,MasteryActivity,MasteryActivityType,NarrativeContext} from "@/lib/types";
@@ -59,13 +63,15 @@ function variedMultiSelectOrder(node:JourneyNode,options:{id:string;label:string
  return patterns[(node.number-1)%patterns.length].map(index=>options[index]);
 }
 
-export function masteryActivityFor(node:JourneyNode,stage:Difficulty):MasteryActivity{
+function rawMasteryActivityFor(node:JourneyNode,stage:Difficulty):MasteryActivity{
  if(node.id.startsWith("HFF-"))return finaleMastery(node,stage);
- if(node.id.startsWith("HFH-"))return herbsMastery(node,stage);
- if(node.id.startsWith("HFW-"))return warMastery(node,stage);
+ if(chapterSevenNodeIds.includes(node.id as typeof chapterSevenNodeIds[number]))return chapterSevenMastery(node,stage);
+ if(chapterSixNodeIds.includes(node.id as typeof chapterSixNodeIds[number]))return chapterSixMastery(node,stage);
  if(node.id.startsWith("HFM-"))return meetingMastery(node,stage);
  if(node.id.startsWith("HFS-")||["HJ-01","HJ-02","HJ-03"].includes(node.id))return searchMastery(node,stage);
  if(crossingNodeIds.includes(node.id as typeof crossingNodeIds[number]))return crossingMastery(node,stage);
+ if(chapterFourNodeIds.includes(node.id as typeof chapterFourNodeIds[number]))return chapterFourMastery(node,stage);
+ if(chapterFiveNodeIds.includes(node.id as typeof chapterFiveNodeIds[number]))return chapterFiveMastery(node,stage);
  const type=masteryFormatPlan[node.id][stage],challenge=challengeFor(node,stage,0),claimType=stage==="scholar"&&(node.id==="HJ-09"||node.id==="HJ-12")?"source-comparison":stage==="scholar"?"interpretation":"textual",base={id:`MA-${node.id}-${stage}`,eventId:node.id,stage,prompt:challenge.prompt,hint:stage==="explorer"?"Recall the people, place, or action you just encountered.":stage==="seeker"?"Follow the cause, relationship, or story order.":"Connect the event with its purpose and meaning.",explanation:challenge.explanation,sourceRefs:node.sourceLabels,unlocks:[],difficulty:stage,replayable:true,perspectives:perspectives(node),claimType:claimType as "textual"|"interpretation"|"source-comparison"};
  if(type==="singleSelect"||type==="sceneDiscovery"||type==="predictionChoice")return{...base,type,prompt:type==="sceneDiscovery"?`Find the detail that belongs in ${node.title} at ${node.place}.`:type==="predictionChoice"?`Before ${node.title} resolves: ${challenge.prompt}`:challenge.prompt,options:fourOptions(node,challenge.choices),correctAnswer:challenge.answer};
  if(type==="multiSelect"){
@@ -80,10 +86,45 @@ export function masteryActivityFor(node:JourneyNode,stage:Difficulty):MasteryAct
  return{...base,type:"matching",prompt:`Match each story element for ${node.title}.`,explanation:`The event at ${node.place} joins a canonical story action with an explicitly labeled learning reflection.`,pairs,options:shuffled(pairs.map(pair=>({id:pair.correct,label:pair.correct}))),correctState:Object.fromEntries(pairs.map(pair=>[pair.id,pair.correct]))};
 }
 
+const feedbackPriorityNodes=new Set(["HJ-10","HJ-11","HJ-13","HJ-15","HFW-02","HFW-06","HFH-02","HFF-04"]);
+const misconceptionGuidance:Record<string,string>={
+ "HJ-10":"it confuses visual presence with evidence about Sītā’s condition and Hanumān’s careful approach.",
+ "HJ-11":"it treats a token, a trusted messenger, or spoken testimony as sufficient by itself instead of reading how they work together.",
+ "HJ-13":"it shifts the entrusted warning toward ego, flattery, or personal victory.",
+ "HJ-15":"it prioritizes chronology or spectacle over the person, proof, message, and next action Rāma needs.",
+ "HFW-02":"it collapses counsel, evidence, and Rāma’s final authority into one role.",
+ "HFW-06":"it acts on urgency before diagnosis identifies what kind of help can save the army.",
+ "HFH-02":"it mistakes scale for indiscriminate force rather than a practical response to an impossible retrieval.",
+ "HFF-04":"it treats return as private celebration instead of responsibility to the people still waiting for news.",
+ "HFM-01":"it turns uncertainty into certainty before inquiry has established intent.",
+ "HFM-02":"it asks one clue in speech to prove more than conduct can establish.",
+ "HFM-03":"it acts before new knowledge has redefined the mission’s purpose.",
+ "HFM-04":"it overlooks reciprocal need and the commitments that make cooperation durable.",
+ "HFM-05":"it asks a trace of passage to prove identity, intention, route, and present location all at once.",
+};
+function withMisconceptionFeedback(activity:MasteryActivity,node:JourneyNode,stage:Difficulty):MasteryActivity{
+ const custom=node.id.startsWith("HFM-")||stage==="scholar"||feedbackPriorityNodes.has(node.id);
+ if(!custom)return activity;
+ const guidance=misconceptionGuidance[node.id]??(stage==="scholar"?"it applies the story’s principle without checking role, evidence, and consequence in the new situation.":"it follows a plausible detail but misses the relationship between cause, evidence, and purpose.");
+ const repair=`This choice is tempting, but ${guidance} Recheck what the scene establishes and what still requires inference.`;
+ if("options" in activity){
+  const correctIds=new Set(activity.type==="multiSelect"?activity.correctState:activity.type==="matching"?[]:[activity.correctAnswer]);
+  return {...activity,misconceptionFeedback:repair,options:activity.options.map(option=>correctIds.has(option.id)||option.feedback?option:{...option,feedback:repair})};
+ }
+ return {...activity,misconceptionFeedback:repair};
+}
+
+export function masteryActivityFor(node:JourneyNode,stage:Difficulty):MasteryActivity{return withMisconceptionFeedback(rawMasteryActivityFor(node,stage),node,stage);}
+
+export function masteryMisconceptionFeedback(activity:MasteryActivity,response:string){
+ if("options" in activity){const option=response.split(",").filter(Boolean).map(id=>activity.options.find(item=>item.id===id)).find(item=>item?.feedback);if(option?.feedback)return option.feedback;}
+ return activity.misconceptionFeedback??"That response follows a plausible detail, but it does not yet fit the scene’s evidence and purpose. Recheck the hint and revise your reasoning.";
+}
+
 export function encodeMasteryResponse(activity:MasteryActivity,response:string){return `${activity.id}|${response}`;}
 export function defaultMasteryResponse(activity:MasteryActivity){return activity.type==="sequence"?activity.items.map(item=>item.id).join(","):"";}
 export function masteryResponseIsCorrect(activity:MasteryActivity,response:string){if(activity.type==="multiSelect")return response.split(",").filter(Boolean).sort().join(",")===activity.correctState.slice().sort().join(",");if(activity.type==="sequence")return response===activity.correctState.join(",");if(activity.type==="matching")return response===activity.pairs.map(pair=>`${pair.id}=${pair.correct}`).join(";");return response===activity.correctAnswer;}
-function legacyCrossingResponseIsCorrect(node:JourneyNode,stage:Difficulty,response:string){
+function legacyJourneyResponseIsCorrect(node:JourneyNode,stage:Difficulty,response:string){
  const type=masteryFormatPlan[node.id]?.[stage],challenge=challengeFor(node,stage,0);
  if(type==="singleSelect"||type==="sceneDiscovery"||type==="predictionChoice")return response===challenge.answer;
  if(type==="multiSelect")return response.split(",").filter(Boolean).sort().join(",")===["answer","reflection"].sort().join(",");
@@ -91,7 +132,12 @@ function legacyCrossingResponseIsCorrect(node:JourneyNode,stage:Difficulty,respo
  if(type==="matching")return response===[`place=${node.place}`,`event=${node.excerpt}`,`meaning=${node.teaching}`].join(";");
  return false;
 }
+function previousChapterFourHj10ResponseIsCorrect(node:JourneyNode,stage:Difficulty,response:string){
+ if(node.id!=="HJ-10")return false;
+ if(stage==="explorer")return response.split(",").filter(Boolean).sort().join(",")===["context","devotion","prior"].sort().join(",");
+ return response==="a";
+}
 export function storedMasteryIsAnswered(node:JourneyNode,stage:Difficulty,value:string|undefined){if(!value)return false;const [id,response]=value.includes("|")?value.split(/\|([\s\S]+)/):["",value];if(id.startsWith("MA-"))return Boolean(response&&masteryActivityFor(node,stage).id===id);return storedAnswerIsAnswered(node,stage,value);}
-export function storedMasteryIsCorrect(node:JourneyNode,stage:Difficulty,value:string|undefined){if(!storedMasteryIsAnswered(node,stage,value)||!value)return false;const [id,response]=value.includes("|")?value.split(/\|([\s\S]+)/):["",value];if(id.startsWith("MA-")){const current=masteryResponseIsCorrect(masteryActivityFor(node,stage),response);return current||(crossingNodeIds.includes(node.id as typeof crossingNodeIds[number])&&legacyCrossingResponseIsCorrect(node,stage,response));}return storedAnswerIsCorrect(node,stage,value);}
+export function storedMasteryIsCorrect(node:JourneyNode,stage:Difficulty,value:string|undefined){if(!storedMasteryIsAnswered(node,stage,value)||!value)return false;const [id,response]=value.includes("|")?value.split(/\|([\s\S]+)/):["",value];if(id.startsWith("MA-")){const current=masteryResponseIsCorrect(masteryActivityFor(node,stage),response),redesigned=([...crossingNodeIds,...chapterFourNodeIds,...chapterFiveNodeIds] as readonly string[]).includes(node.id),legacyMeeting=node.id.startsWith("HFM-")&&masteryResponseIsCorrect(legacyMeetingMastery(node,stage),response),legacyWar=chapterSixNodeIds.includes(node.id as typeof chapterSixNodeIds[number])&&masteryResponseIsCorrect(warMastery(node,stage),response),legacyHerbs=chapterSevenNodeIds.includes(node.id as typeof chapterSevenNodeIds[number])&&masteryResponseIsCorrect(herbsMastery(node,stage),response),legacyFinale=node.id.startsWith("HFF-")&&masteryResponseIsCorrect(legacyFinaleMastery(node,stage),response);return current||(redesigned&&legacyJourneyResponseIsCorrect(node,stage,response))||previousChapterFourHj10ResponseIsCorrect(node,stage,response)||legacyMeeting||legacyWar||legacyHerbs||legacyFinale;}return storedAnswerIsCorrect(node,stage,value);}
 
 export function masteryAudit(){const audited=[...searchNodes,...journeyNodes],activities=audited.flatMap(node=>stages.map(stage=>masteryActivityFor(node,stage))),distribution=activities.reduce((counts,activity)=>({...counts,[activity.type]:(counts[activity.type]??0)+1}),{} as Record<string,number>);return{activities,distribution,singleOnlyNodes:journeyNodes.filter(node=>masteryFormatPlan[node.id]&&stages.every(stage=>masteryFormatPlan[node.id][stage]==="singleSelect")).map(node=>node.id),unsupportedSourceRefs:activities.filter(activity=>!activity.sourceRefs.length).map(activity=>activity.id),missingFeedback:activities.filter(activity=>!activity.explanation||!activity.hint).map(activity=>activity.id),duplicatePrompts:Array.from(new Set(activities.filter((activity,index)=>activities.findIndex(item=>item.prompt===activity.prompt)!==index).map(activity=>activity.prompt)))};}

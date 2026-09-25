@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
-import { ArrowLeft, Check, Compass, Mountain, Bird, Flame, Crown, Flower2, Swords, Shell, Waves, Footprints, Gem, Mail, House, Users, Wind, ZoomIn, ZoomOut, Star, Info, X, Share2, Route, Maximize2, MoveHorizontal } from "lucide-react";
+import { ArrowLeft, ArrowRight, Check, Compass, Mountain, Bird, Flame, Crown, Flower2, Swords, Shell, Waves, Footprints, Gem, Mail, House, Users, Wind, ZoomIn, ZoomOut, Star, Info, X, Share2, Route, Maximize2, MoveHorizontal } from "lucide-react";
 import { geoMercator, geoPath } from "d3-geo";
 import { feature } from "topojson-client";
 import countries from "world-atlas/countries-50m.json";
@@ -11,12 +11,14 @@ import type { GeometryCollection, Topology } from "topojson-specification";
 import { journeyNodes } from "@/data/journey";
 import { ConfidenceBadge } from "@/components/confidence-badge";
 import { useProgress } from "@/components/progress-provider";
-import { nodeMastery } from "@/lib/progress";
+import { canEnterNode, nodeMastery } from "@/lib/progress";
 import {CharacterPortrait} from "@/components/character-portrait";
 import {characters} from "@/data/discoveries";
 import {characterNameById} from "@/data/character-ids";
 import {relationshipTypeLabels,relationships} from "@/data/relationships";
 import {hanumanCampaignChapters} from "@/data/hanuman-campaign";
+import {encounterHref} from "@/lib/journey-navigation";
+import {chapterMapStoryReveal} from "@/lib/map-story-reveal";
 
 const icons = [Users, Bird, Shell, Footprints, Mountain, Shell, Waves, House, Gem, Flower2, Mail, Swords, Crown, Flame, Wind];
 // Story-layout coordinates: calibrated to ensure distinct pin separation and no badge collisions
@@ -50,10 +52,14 @@ export function JourneyMap({chapterId,onBack}:{chapterId?:string;onBack?:()=>voi
   const [showSwipeHint, setShowSwipeHint] = useState(true);
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const [accuracyOpen,setAccuracyOpen]=useState(false);
+  const accuracyTriggerRef=useRef<HTMLButtonElement>(null),accuracyHeadingRef=useRef<HTMLHeadingElement>(null);
+  function openAccuracy(){setAccuracyOpen(true);requestAnimationFrame(()=>accuracyHeadingRef.current?.focus());}
+  function closeAccuracy(){setAccuracyOpen(false);requestAnimationFrame(()=>accuracyTriggerRef.current?.focus());}
   const [activeReveal,setActiveReveal]=useState<ActiveReveal|null>(null);
   const pendingReveal=pendingMapUnlocks[0];
   const selected = journeyNodes.find(n => n.id === (selection ?? initialNode)) ?? journeyNodes[0];
   const available = journeyNodes.findIndex(n => n.id === progress.currentNode);
+  const selectedLocked=selected.number-1>available;
   const beginCue = progress.completedNodes.length === 0;
   const map = useMemo(() => {
     const projection = geoMercator().center([79.05,8.55]).scale(6900).translate([500,360]);
@@ -73,7 +79,8 @@ export function JourneyMap({chapterId,onBack}:{chapterId?:string;onBack?:()=>voi
     if(!pendingReveal)return;
     setSelection(pendingReveal.nodeId);
     const sequence:ActiveReveal[]=[...pendingReveal.characterNames.map(name=>({kind:"character" as const,name})),...pendingReveal.relationshipIds.map(id=>({kind:"relationship" as const,id})),...(pendingReveal.nextNodeId?[{kind:"route" as const}]:[{kind:"complete" as const}])];
-    const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches,duration=reduced?220:850;
+    const reduced=window.matchMedia("(prefers-reduced-motion: reduce)").matches,duration=reduced?0:850;
+    if(reduced){setActiveReveal(null);acknowledgeMapUnlock(pendingReveal.id);return;}
     setActiveReveal(sequence[0]??null);
     const timers=sequence.slice(1).map((item,index)=>window.setTimeout(()=>setActiveReveal(item),duration*(index+1)));
     const finish=window.setTimeout(()=>{setActiveReveal(null);acknowledgeMapUnlock(pendingReveal.id);},duration*Math.max(sequence.length,1));
@@ -92,6 +99,7 @@ export function JourneyMap({chapterId,onBack}:{chapterId?:string;onBack?:()=>voi
   const currentNode=chapter?.playableNodeIds.includes(progress.currentNode)?journeyNodes[available]:journeyNodes.find(node=>chapter?.playableNodeIds.includes(node.id)&&!progress.completedNodes.includes(node.id))??selected;
   const hanuman=characters.find(character=>character.id==="hanuman");
   const rama=characters.find(character=>character.id==="rama");
+  const {ramaSetu:setuReached,returnToRama:returnReached}=chapterMapStoryReveal(progress);
 
   useEffect(() => {
     const container = scrollContainerRef.current;
@@ -103,33 +111,35 @@ export function JourneyMap({chapterId,onBack}:{chapterId?:string;onBack?:()=>voi
     if (container.scrollWidth > container.clientWidth) {
       const targetX = (point[0] / 1000) * container.scrollWidth;
       const scrollPos = Math.max(0, targetX - container.clientWidth / 2);
-      container.scrollTo({ left: scrollPos, behavior: "smooth" });
+      container.scrollTo({ left: scrollPos, behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches?"instant":"smooth" });
     }
   }, [selection, progress.currentNode, map.points]);
 
-  return <div className="atlas-page">
+  return <div className="atlas-page" role="main">
     <div className="atlas-heading"><div>{onBack&&<button className="atlas-back-to-campaign" type="button" onClick={onBack}><ArrowLeft/>Campaign Map</button>}<p className="eyebrow">Chapter Map · {chapter?`Chapter ${chapter.number}`:"Mission to Laṅkā"}</p><h1>{chapter?.title??"Mission to Laṅkā Map"}</h1><p>{chapter?.description??"The current playable center of Hanumān’s larger character campaign."}</p></div><div className={`atlas-heading-progress ${journeyComplete?"is-complete":""}`}><div className="atlas-progress-seal" style={{"--journey-progress":`${progressPercent*3.6}deg`} as React.CSSProperties}><Compass size={26}/></div><span><small>Chapter progress</small>{chapterCompleted}<small> / {chapterTotal} discovered</small><b className="atlas-progress-line"><i style={{width:`${progressPercent}%`}}/></b><em>{journeyComplete?"Chapter complete":`${currentNode.id} · ${currentNode.title}`}</em></span></div></div>
+    {canEnterNode(progress,currentNode)&&<div className="atlas-mobile-current"><span><small>Current encounter · {currentNode.id}</small><strong>{currentNode.title}</strong></span><Link href={encounterHref(currentNode.slug,"chapter",chapterId)}>Enter encounter <ArrowRight aria-hidden="true"/></Link></div>}
     <div className="atlas-stage">
     <aside className="atlas-devotional-figure" aria-label="Hanumān, guardian of the journey">{hanuman?.portrait&&<div className="atlas-figure-portrait"><CharacterPortrait name={hanuman.name} portrait={hanuman.portrait} usage="detail"/></div>}<div className="atlas-figure-copy"><span>✦</span><strong>Faith moves mountains</strong><small>Across oceans.<br/>Within yourself.</small></div></aside>
     <div className="atlas-frame">
       <div className="atlas-scroll" ref={scrollContainerRef} onScroll={() => setShowSwipeHint(false)}>
+        <p className="sr-only">Illustrated chapter map of South India and Laṅkā, with Rāmeśvaram and Palk Strait between them. Use the encounter links to navigate the journey.</p>
         {showSwipeHint && (
-          <div className="atlas-swipe-hint" role="status" onClick={() => setShowSwipeHint(false)}>
+          <button type="button" className="atlas-swipe-hint" aria-label="Dismiss map navigation hint" onClick={() => setShowSwipeHint(false)}>
             <MoveHorizontal size={14} />
             <span>Swipe to explore crossing &amp; Laṅkā</span>
-          </div>
+          </button>
         )}
         <div className={`atlas-art ${zoom?"is-zoomed":""} ${fitOverview?"is-fit-overview":""}`}>
-          <svg viewBox="0 0 1000 760" className="atlas-svg" aria-label="Illustrated map of South India and Sri Lanka">
+          <svg viewBox="0 0 1000 760" className="atlas-svg" aria-hidden="true">
             <defs>
               <marker id="route-arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto"><path d="M0 0L10 5L0 10L3 5Z" fill="#ffda86"/></marker>
             </defs>
             <image className="atlas-map-base" href="/images/atlas-base-v3.png" x="0" y="0" width="1000" height="760" preserveAspectRatio="xMidYMid slice"/>
-            <path d={map.bridge} fill="none" stroke="#d9cf94" strokeWidth="4" strokeDasharray="5 5"/>
+            {setuReached&&<path d={map.bridge} fill="none" stroke="#d9cf94" strokeWidth="4" strokeDasharray="5 5"/>}
             <circle cx={map.rameswaram[0]} cy={map.rameswaram[1]} r="3" fill="#fff2be"/>
             <text className="atlas-place" x={map.rameswaram[0]-8} y={map.rameswaram[1]-12} textAnchor="end">Rāmeśvaram</text>
             <text className="atlas-water" x="535" y="185">PALK STRAIT</text>
-            <text className="atlas-place small" x="625" y="282">Rāma Setu (trad.)</text>
+            {setuReached&&<text className="atlas-place small" x="625" y="282">Rāma Setu (trad.)</text>}
             <text className="atlas-country" x="290" y="205" textAnchor="middle">BHĀRATA</text>
             <text className="atlas-country-sub" x="290" y="227" textAnchor="middle">SOUTH INDIA</text>
             <text className="atlas-country" x="734" y="325" textAnchor="middle">LAṄKĀ</text>
@@ -141,7 +151,7 @@ export function JourneyMap({chapterId,onBack}:{chapterId?:string;onBack?:()=>voi
             </g>
             <path className="atlas-route" d="M340 430 Q390 445 435 468 T510 502 Q552 503 580 460 Q650 418 672 380" markerEnd="url(#route-arrow)"/>
             <text className="atlas-route-label" x="350" y="590">Hanumān’s ocean crossing</text>
-            <text className="atlas-route-label small" x="392" y="697">Return to Rāma · Bhārata</text>
+            {returnReached&&<text className="atlas-route-label small" x="392" y="697">Return to Rāma</text>}
             <ellipse cx="326" cy="408" rx="38" ry="29" fill="#b6562a" fillOpacity=".3" stroke="#ffd08b" strokeDasharray="5 4" strokeWidth="2"/>
             <path d={`M${map.sita[0]} ${map.sita[1]} L797 604`} stroke="#9ccafa" strokeWidth="1.3" strokeDasharray="3 4" fill="none"/>
             <ellipse cx={map.sita[0]} cy={map.sita[1]} rx="23" ry="18" fill="#407fa1" fillOpacity=".3" stroke="#b4d6f4" strokeWidth="1"/>
@@ -155,20 +165,20 @@ export function JourneyMap({chapterId,onBack}:{chapterId?:string;onBack?:()=>voi
             const questionStars = nodeMastery(progress,node);
             const newlyUnlocked=activeReveal?.kind==="route"&&pendingReveal?.nextNodeId===node.id;
             const pinContent=<>
-              <span className="pin-emblem">{node.id==="HJ-15"&&rama?.portrait?<CharacterPortrait name={rama.name} portrait={rama.portrait} usage="medallion"/>:<Icon size={22}/>} {progress.completedNodes.includes(node.id)&&<Check className="pin-check" size={12}/>}</span><span className="pin-label">{index>available&&<span aria-hidden="true">🔒 </span>}{node.title}</span>{["HJ-05","HJ-06","HJ-07"].includes(node.id)&&<small>(narrative)</small>}
-              <span className="pin-stars" aria-label={`${questionStars.filter(Boolean).length} of 3 questions correct`}>{questionStars.map((filled,star)=><Star key={star} size={11} fill={filled?"currentColor":"none"}/>)}</span>
+              <span className="pin-emblem">{node.id==="HJ-15"&&!isLocked&&rama?.portrait?<CharacterPortrait name={rama.name} portrait={rama.portrait} usage="medallion"/>:<Icon size={22}/>} {progress.completedNodes.includes(node.id)&&<Check className="pin-check" size={12}/>}</span><span className="pin-label">{isLocked&&<span aria-hidden="true">🔒 </span>}{isLocked?"Unreached encounter":node.title}</span>{!isLocked&&["HJ-05","HJ-06","HJ-07"].includes(node.id)&&<small>(narrative)</small>}
+              <span className="pin-stars" aria-label={`${questionStars.filter(Boolean).length} of 3 mastery stars`}>{questionStars.map((filled,star)=><Star key={star} size={11} fill={filled?"currentColor":"none"}/>)}</span>
               {beginCue&&index===0&&<span className="atlas-begin-cue">Begin the journey</span>}
             </>;
             const className=`atlas-pin node-${node.number} ${isLocked?"is-locked":"is-enterable"} level-${node.confidence} ${isSelected?"is-selected":""} ${node.id===progress.currentNode?"is-current":""} ${progress.completedNodes.includes(node.id)?"is-completed":""} ${newlyUnlocked?"is-newly-unlocked":""} ${node.id==="HJ-14"?"fire-pin":""}`;
             const style={left:`${(x/10).toFixed(3)}%`,top:`${(y/7.6).toFixed(3)}%`};
-            if(isLocked)return <button key={node.id} type="button" onClick={()=>setSelection(node.id)} aria-label={`${node.title}. Complete the previous encounter to unlock this location.`} aria-pressed={isSelected} title="Complete the previous encounter to unlock this location." className={className} style={style}>{pinContent}</button>;
-            return <Link key={node.id} href={`/journey/hanuman/${node.slug}`} onClick={()=>chooseNode(node.id)} aria-label={`Enter ${node.title}`} aria-current={node.id===progress.currentNode?"step":undefined} className={className} style={style}>{pinContent}</Link>;
+            if(isLocked)return <button key={node.id} type="button" onClick={()=>setSelection(node.id)} aria-label={`Unreached encounter ${node.id}. Complete the previous encounter to reveal it.`} aria-pressed={isSelected} title="Complete the previous encounter to reveal this story moment." className={className} style={style}>{pinContent}</button>;
+            return <Link key={node.id} href={encounterHref(node.slug,"chapter",chapterId)} onClick={()=>chooseNode(node.id)} aria-label={`Enter ${node.title}`} aria-current={node.id===progress.currentNode?"step":undefined} className={className} style={style}>{pinContent}</Link>;
           })}
-          <button className="atlas-accuracy-trigger" aria-expanded={accuracyOpen} onClick={()=>setAccuracyOpen(value=>!value)}><Info/>Map accuracy</button>
-          {accuracyOpen&&<aside className="atlas-accuracy-panel" aria-label="Map accuracy guide"><button onClick={()=>setAccuracyOpen(false)} aria-label="Close map accuracy guide"><X/></button><p className="eyebrow">Map accuracy</p><h2>How certain are these locations?</h2><p>Some Rāmāyaṇa locations can be strongly anchored, while others are known through tradition, proposed identifications, or narrative geography.</p><dl><div><dt>A</dt><dd>Strongly anchored</dd></div><div><dt>B</dt><dd>Traditional identification</dd></div><div><dt>C</dt><dd>Plausible identification</dd></div><div><dt>D</dt><dd>Debated location</dd></div><div><dt>E</dt><dd>Narrative / unknown</dd></div></dl></aside>}
           {activeReveal&&revealPoint&&<div className={`atlas-unlock-reveal reveal-${activeReveal.kind}`} role="status" style={{left:`clamp(150px,${(revealPoint[0]/10).toFixed(3)}%,calc(100% - 150px))`,top:`clamp(90px,${(revealPoint[1]/7.6).toFixed(3)}%,calc(100% - 90px))`}}>{activeReveal.kind==="character"&&revealCharacter?.portrait&&<><span className="atlas-reveal-portrait"><CharacterPortrait name={revealCharacter.name} portrait={revealCharacter.portrait} usage="reward"/></span><div><small>Character discovered</small><strong>{revealCharacter.name}</strong></div></>}{activeReveal.kind==="relationship"&&revealRelationship&&<><Share2/><div><small>Relationship discovered</small><strong>{characterNameById[revealRelationship.fromCharacterId]} → {characterNameById[revealRelationship.toCharacterId]} — {relationshipTypeLabels[revealRelationship.type]}</strong></div></>}{activeReveal.kind==="route"&&<><Route/><div><small>Journey advanced</small><strong>The next path is revealed</strong></div></>}{activeReveal.kind==="complete"&&<><Check/><div><small>Journey fulfilled</small><strong>Hanumān Journey Complete</strong></div></>}</div>}
         </div>
       </div>
+      <button className="atlas-accuracy-trigger" ref={accuracyTriggerRef} aria-expanded={accuracyOpen} onClick={accuracyOpen?closeAccuracy:openAccuracy}><Info/>Map accuracy</button>
+      {accuracyOpen&&<aside className="atlas-accuracy-panel" aria-label="Map accuracy guide"><button onClick={closeAccuracy} aria-label="Close map accuracy guide"><X/></button><p className="eyebrow">Map accuracy</p><h2 ref={accuracyHeadingRef} tabIndex={-1}>How certain are these locations?</h2><p>Some Rāmāyaṇa locations can be strongly anchored, while others are known through tradition, proposed identifications, or narrative geography.</p><dl><div><dt>A</dt><dd>Strongly anchored</dd></div><div><dt>B</dt><dd>Traditional identification</dd></div><div><dt>C</dt><dd>Plausible identification</dd></div><div><dt>D</dt><dd>Debated location</dd></div><div><dt>E</dt><dd>Narrative / unknown</dd></div></dl></aside>}
       <div className="atlas-tools">
         <div className="atlas-tool-group">
           <button onClick={() => { setZoom(v=>!v); if (fitOverview) setFitOverview(false); }} aria-label={zoom?"Fit view":"Enlarge map"}>
@@ -185,9 +195,9 @@ export function JourneyMap({chapterId,onBack}:{chapterId?:string;onBack?:()=>voi
     </div>
     <div className="atlas-caption"><span>Coastlines: Natural Earth, 1:50m · North up</span><span>Story markers are symbolic; traditional regions are approximate.</span></div>
     <section className={`atlas-encounter ${selected.id===progress.currentNode?"is-current":""}`} aria-live="polite">
-      <div className="atlas-encounter-title"><p className="eyebrow">{selected.id} · {selected.eyebrow}</p><h2>{selected.title}</h2><ConfidenceBadge level={selected.confidence}/></div>
-      <div><p>{selected.excerpt}</p><small>{selected.place}</small>{selected.confidence!=="A"&&<details className="atlas-why-here"><summary>Why here?</summary><p>{selected.whyHere.reason}</p></details>}</div>
-      {selected.number-1>available?<p className="atlas-locked-note">Complete the previous encounter to unlock this location.</p>:<Link className="atlas-enter-encounter" href={`/journey/hanuman/${selected.slug}`}>{beginCue&&selected.number===1?"Begin the journey":"Enter encounter"}<span>→</span></Link>}
+      <div className="atlas-encounter-title"><p className="eyebrow">{selected.id} · {selectedLocked?"Story still ahead":selected.eyebrow}</p><h2>{selectedLocked?"Unreached encounter":selected.title}</h2>{!selectedLocked&&<ConfidenceBadge level={selected.confidence}/>}</div>
+      <div><p>{selectedLocked?"The story will reveal this encounter when you reach it.":selected.excerpt}</p>{!selectedLocked&&<><small>{selected.place}</small>{selected.confidence!=="A"&&<details className="atlas-why-here"><summary>Why here?</summary><p>{selected.whyHere.reason}</p></details>}</>}</div>
+      {selectedLocked?<p className="atlas-locked-note">Complete the previous encounter to reveal this location.</p>:<Link className="atlas-enter-encounter" href={encounterHref(selected.slug,"chapter",chapterId)}>{beginCue&&selected.number===1?"Begin the journey":"Enter encounter"}<span>→</span></Link>}
     </section>
   </div>;
 }
