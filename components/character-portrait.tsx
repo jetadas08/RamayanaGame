@@ -16,12 +16,12 @@ function positionPercent(value:string){
  return match?Math.min(100,Math.max(0,Number(match[1]))):25;
 }
 
-export function CharacterPortrait({name,portrait,large=false,usage}:{name:string;portrait:CharacterPortraitData;large?:boolean;usage?:PortraitUsage}){
+export function CharacterPortrait({name,portrait,large=false,usage,draggable}:{name:string;portrait:CharacterPortraitData;large?:boolean;usage?:PortraitUsage;draggable?:boolean}){
  const resolvedUsage=usage??(large?"detail":"card");
  const isThumbnail=resolvedUsage==="medallion"||resolvedUsage==="reward";
  const focalPosition=(isThumbnail&&portrait.thumbnailPosition)||portrait.position||DEFAULT_PORTRAIT_POSITION;
  if(!portrait.sprite){
-  return <Image src={portrait.src} alt={isThumbnail?"":`Illustrated portrait of ${name}`} fill sizes={portraitSizes[resolvedUsage]} quality={95} className="object-cover" style={{objectPosition:focalPosition}}/>;
+  return <Image src={portrait.src} alt={isThumbnail?"":`Illustrated portrait of ${name}`} fill sizes={portraitSizes[resolvedUsage]} quality={95} className="object-cover" style={{objectPosition:focalPosition}} draggable={draggable}/>;
  }
 
  // The legacy Laṅkā artwork contains six columns and three portrait rows.
@@ -43,6 +43,7 @@ export function CharacterPortrait({name,portrait,large=false,usage}:{name:string
   height={1254}
   quality={95}
   unoptimized
+  draggable={draggable}
   className="max-w-none"
   style={{position:"absolute",width:`${columns*100}%`,height:"auto",left:`-${column*100}%`,top:`-${topOffset}%`}}
  />;
